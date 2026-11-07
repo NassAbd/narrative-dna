@@ -184,9 +184,9 @@ export function JuryLivePanel({
             />
           </div>
           <p className="text-sm text-muted-foreground">
-            French TikTok · up to 10 videos · no date filter. Failed or cancelled analyses retain
-            their reserved quota. Completed matching queries use the cache without new provider
-            calls. This sample does not represent public opinion.
+            French TikTok · up to 4 selected videos · no date filter. Failed or cancelled analyses
+            retain their reserved quota. Completed matching queries use the cache without new
+            provider calls. This sample does not represent public opinion.
           </p>
           {phase.kind === "running" && (
             <>
@@ -216,6 +216,8 @@ export function JuryLivePanel({
   );
 }
 const warningMessages: Record<string, string> = {
+  video_selection_limit:
+    "Up to four substantive videos were selected from the retrieved corpus for this bounded analysis.",
   clustering_skipped_input_limit:
     "Grouping was skipped to stay within the model input budget. Source-verified individual observations are shown instead.",
   oriane_partial_response:

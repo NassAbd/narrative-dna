@@ -43,6 +43,8 @@ export interface EvidenceClip {
   publishedAt: string | null;
   /** Only when provided by the source. Never invented. */
   sourceUrl?: string;
+  /** Verified official TikTok post ID, never an Oriane content ID. */
+  tiktokPostId?: string;
   frameUrl?: string;
   frameTimestampSec?: number;
   formulation?: string;

@@ -35,7 +35,7 @@ describe("approved precomputed adapter", () => {
     expect(
       clips.every(
         (c) =>
-          !c.sourceUrl &&
+          c.sourceUrl?.startsWith("https://www.tiktok.com/@") &&
           c.frameUrl?.startsWith("https://social-catalog-static.oriane.xyz/") &&
           !c.videoId.startsWith("mock-"),
       ),

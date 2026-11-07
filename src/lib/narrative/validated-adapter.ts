@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { verifiedOriginalMedia } from "./original-media";
 import type { AnalysisResult, EvidenceClip, SearchQuery } from "./types";
 
 const time = z.number().finite().nonnegative().nullable();
@@ -126,6 +127,7 @@ export function adaptValidatedPayload(input: unknown): AnalysisResult {
         formulation: c.formulation,
         discourseType: c.type,
         provenance: "precomputed",
+        ...verifiedOriginalMedia(c.videoId, c.platform ?? null),
       },
     ]),
   );

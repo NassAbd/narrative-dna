@@ -1,0 +1,158 @@
+{
+  "checkedDate": "2026-11-07",
+  "scope": "Five approved Explore sources only; no Oriane/OpenAI calls were made",
+  "localEvidence": [
+    "src/lib/narrative/approved-demo.json",
+    "../experiments/narrative-dna/fixtures/sanitized/approved-source-metadata.json",
+    "../../docs/oriane-integration-connect.json"
+  ],
+  "schemaFindings": {
+    "contentSchema": "SearchContentsResponse.FullResult.Body",
+    "orianeId": "Internal content ID, e.g. cnt_...",
+    "platformId": "Separate platform external content ID, documented by SearchContentsRequest.Filters.Body.platformId",
+    "retainedFixtures": "Sanitized corpus deliberately sets source.platformId to null; approved metadata projection omits it. No nonempty original platformId for these five was found."
+  },
+  "officialDocumentation": [
+    "https://developers.tiktok.com/docs/en/embed-player",
+    "https://developers.tiktok.com/docs/en/embed-videos"
+  ],
+  "verificationPolicy": "Official oEmbed post identity plus visible original link/author in official player verifies the mapping. Player load is not proof of media playback. No video is labelled removed from generic errors.",
+  "coverage": {
+    "sourcesWithOfficialEmbedId": 5,
+    "evidenceCardsWithOfficialEmbedId": 9,
+    "canonicalBrowserVerification": "5 source links verified in official players; 9 cards",
+    "playbackBrowserVerification": "4 of 5 sources (6 of 9 cards) confirmed playing through official players; remaining source (3cards) returned a network player error, not confirmed removed."
+  },
+  "sources": [
+    {
+      "orianeId": "cnt_356bd2866bc6b7f53e897a26ad82",
+      "platform": "tiktok",
+      "handle": "jeunesinsoumis",
+      "tiktokPostId": "7685824397072026912",
+      "evidenceCards": 3,
+      "identifierProvenance": {
+        "candidate": "Existing approved Oriane frame URL numeric path segment; not treated as proof alone",
+        "confirmed": "Official TikTok oEmbed embed_product_id exactly matched candidate; provider_name TikTok, type video, embed_type video"
+      },
+      "oembed": {
+        "status": 200,
+        "latencyMs": 345,
+        "requestUrl": "https://www.tiktok.com/oembed?url=https%3A%2F%2Fwww.tiktok.com%2F%40jeunesinsoumis%2Fvideo%2F7685824397072026912",
+        "verifiedEmbedProductId": "7685824397072026912"
+      },
+      "officialPlayerUrl": "https://www.tiktok.com/player/v1/7685824397072026912",
+      "canonicalCandidate": "https://www.tiktok.com/@jeunesinsoumis/video/7685824397072026912",
+      "publicationHeadStatus": 200,
+      "canonicalBrowserVerified": true,
+      "playbackBrowserVerified": false,
+      "canonicalUrl": "https://www.tiktok.com/@jeunesinsoumis/video/7685824397072026912",
+      "canonicalEvidence": "Visible original-video link in official TikTok player matched Oriane creator handle and official oEmbed post ID; tracking query omitted.",
+      "playerRendered": true,
+      "playbackObservation": "Actual Play clicked; TikTok returned Player error/network connection message; not evidence of removal."
+    },
+    {
+      "orianeId": "cnt_70048414b09bf31bab7354732940",
+      "platform": "tiktok",
+      "handle": "grandebavardeuse",
+      "tiktokPostId": "7684314552493722913",
+      "evidenceCards": 1,
+      "identifierProvenance": {
+        "candidate": "Existing approved Oriane frame URL numeric path segment; not treated as proof alone",
+        "confirmed": "Official TikTok oEmbed embed_product_id exactly matched candidate; provider_name TikTok, type video, embed_type video"
+      },
+      "oembed": {
+        "status": 200,
+        "latencyMs": 326,
+        "requestUrl": "https://www.tiktok.com/oembed?url=https%3A%2F%2Fwww.tiktok.com%2F%40grandebavardeuse%2Fvideo%2F7684314552493722913",
+        "verifiedEmbedProductId": "7684314552493722913"
+      },
+      "officialPlayerUrl": "https://www.tiktok.com/player/v1/7684314552493722913",
+      "canonicalCandidate": "https://www.tiktok.com/@grandebavardeuse/video/7684314552493722913",
+      "publicationHeadStatus": 200,
+      "canonicalBrowserVerified": true,
+      "playbackBrowserVerified": true,
+      "canonicalUrl": "https://www.tiktok.com/@grandebavardeuse/video/7684314552493722913",
+      "canonicalEvidence": "Visible original-video link in official TikTok player matched Oriane creator handle and official oEmbed post ID; tracking query omitted.",
+      "playerRendered": true,
+      "playbackObservation": "User-initiated Play advanced official player timeline; Pause or Replay observed in browser."
+    },
+    {
+      "orianeId": "cnt_e6e73aa987c6597c9339558d6a8c",
+      "platform": "tiktok",
+      "handle": "marylouleloup",
+      "tiktokPostId": "7678752430602931488",
+      "evidenceCards": 2,
+      "identifierProvenance": {
+        "candidate": "Existing approved Oriane frame URL numeric path segment; not treated as proof alone",
+        "confirmed": "Official TikTok oEmbed embed_product_id exactly matched candidate; provider_name TikTok, type video, embed_type video"
+      },
+      "oembed": {
+        "status": 200,
+        "latencyMs": 327,
+        "requestUrl": "https://www.tiktok.com/oembed?url=https%3A%2F%2Fwww.tiktok.com%2F%40marylouleloup%2Fvideo%2F7678752430602931488",
+        "verifiedEmbedProductId": "7678752430602931488"
+      },
+      "officialPlayerUrl": "https://www.tiktok.com/player/v1/7678752430602931488",
+      "canonicalCandidate": "https://www.tiktok.com/@marylouleloup/video/7678752430602931488",
+      "publicationHeadStatus": 200,
+      "canonicalBrowserVerified": true,
+      "playbackBrowserVerified": true,
+      "canonicalUrl": "https://www.tiktok.com/@marylouleloup/video/7678752430602931488",
+      "canonicalEvidence": "Visible original-video link in official TikTok player matched Oriane creator handle and official oEmbed post ID; tracking query omitted.",
+      "playerRendered": true,
+      "playbackObservation": "User-initiated Play advanced official player timeline; Pause or Replay observed in browser."
+    },
+    {
+      "orianeId": "cnt_fb4c8aa6e9ebe7aaf819f08ef124",
+      "platform": "tiktok",
+      "handle": "france3paca",
+      "tiktokPostId": "7686906434700840224",
+      "evidenceCards": 2,
+      "identifierProvenance": {
+        "candidate": "Existing approved Oriane frame URL numeric path segment; not treated as proof alone",
+        "confirmed": "Official TikTok oEmbed embed_product_id exactly matched candidate; provider_name TikTok, type video, embed_type video"
+      },
+      "oembed": {
+        "status": 200,
+        "latencyMs": 324,
+        "requestUrl": "https://www.tiktok.com/oembed?url=https%3A%2F%2Fwww.tiktok.com%2F%40france3paca%2Fvideo%2F7686906434700840224",
+        "verifiedEmbedProductId": "7686906434700840224"
+      },
+      "officialPlayerUrl": "https://www.tiktok.com/player/v1/7686906434700840224",
+      "canonicalCandidate": "https://www.tiktok.com/@france3paca/video/7686906434700840224",
+      "publicationHeadStatus": 200,
+      "canonicalBrowserVerified": true,
+      "playbackBrowserVerified": true,
+      "canonicalUrl": "https://www.tiktok.com/@france3paca/video/7686906434700840224",
+      "canonicalEvidence": "Visible original-video link in official TikTok player matched Oriane creator handle and official oEmbed post ID; tracking query omitted.",
+      "playerRendered": true,
+      "playbackObservation": "User-initiated Play advanced official player timeline; Pause or Replay observed in browser."
+    },
+    {
+      "orianeId": "cnt_8edc76c0394ea74f83d4452b916c",
+      "platform": "tiktok",
+      "handle": "romain_lck",
+      "tiktokPostId": "7688391500924751137",
+      "evidenceCards": 1,
+      "identifierProvenance": {
+        "candidate": "Existing approved Oriane frame URL numeric path segment; not treated as proof alone",
+        "confirmed": "Official TikTok oEmbed embed_product_id exactly matched candidate; provider_name TikTok, type video, embed_type video"
+      },
+      "oembed": {
+        "status": 200,
+        "latencyMs": 326,
+        "requestUrl": "https://www.tiktok.com/oembed?url=https%3A%2F%2Fwww.tiktok.com%2F%40romain_lck%2Fvideo%2F7688391500924751137",
+        "verifiedEmbedProductId": "7688391500924751137"
+      },
+      "officialPlayerUrl": "https://www.tiktok.com/player/v1/7688391500924751137",
+      "canonicalCandidate": "https://www.tiktok.com/@romain_lck/video/7688391500924751137",
+      "publicationHeadStatus": 200,
+      "canonicalBrowserVerified": true,
+      "playbackBrowserVerified": true,
+      "canonicalUrl": "https://www.tiktok.com/@romain_lck/video/7688391500924751137",
+      "canonicalEvidence": "Visible original-video link in official TikTok player matched Oriane creator handle and official oEmbed post ID; tracking query omitted.",
+      "playerRendered": true,
+      "playbackObservation": "User-initiated Play advanced official player timeline; Pause or Replay observed in browser."
+    }
+  ]
+}

@@ -1,3 +1,5 @@
+import { TikTokPlayer } from "./TikTokPlayer";
+import { originalVideoUrl, validTikTokPostId } from "@/lib/narrative/original-media";
 import { ExternalLink } from "lucide-react";
 import {
   Sheet,
@@ -36,6 +38,7 @@ function Row({ label, value }: { label: string; value: string | null | undefined
 
 export function EvidenceDrawer({ clip, narrative, onClose }: Props) {
   const mobile = useIsMobile();
+  const sourceUrl = clip ? originalVideoUrl(clip) : undefined;
   return (
     <Sheet open={!!clip} onOpenChange={(o) => !o && onClose()}>
       <SheetContent
@@ -96,6 +99,13 @@ export function EvidenceDrawer({ clip, narrative, onClose }: Props) {
                   </p>
                 )}
               </div>
+              {clip.platform === "tiktok" && validTikTokPostId(clip.tiktokPostId) && (
+                <TikTokPlayer
+                  key={clip.tiktokPostId}
+                  postId={clip.tiktokPostId}
+                  startSec={clip.startSec}
+                />
+              )}
               <div>
                 <EvidenceFrame clip={clip} large />
                 <p className="mt-1 font-mono text-[10px] text-muted-foreground">
@@ -131,11 +141,11 @@ export function EvidenceDrawer({ clip, narrative, onClose }: Props) {
                 />
                 <Row label="Video ID" value={clip.videoId} />
               </dl>
-              {clip.sourceUrl ? (
+              {sourceUrl ? (
                 <a
-                  href={clip.sourceUrl}
+                  href={sourceUrl}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
                 >
                   Open original video <ExternalLink className="size-4" />

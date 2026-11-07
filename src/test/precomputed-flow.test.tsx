@@ -34,13 +34,19 @@ it("loads the real groups and separate observations and opens exact evidence wit
   expect(
     within(drawer).getByText(`${claim.startSeconds} – ${claim.endSeconds} s`),
   ).toBeInTheDocument();
-  expect(within(drawer).getByText("Original link not provided.")).toBeInTheDocument();
+  expect(within(drawer).getByRole("link", { name: /Open original video/ })).toHaveAttribute(
+    "href",
+    "https://www.tiktok.com/@grandebavardeuse/video/7684314552493722913",
+  );
   expect(within(drawer).queryByText("Not available")).not.toBeInTheDocument();
   expect(
     within(drawer).getByText(`${claim.creator.displayName} (${claim.creator.handle})`),
   ).toBeInTheDocument();
   expect(within(drawer).getByRole("img")).toHaveAttribute("src", claim.frameUrl);
-  expect(within(drawer).queryByRole("link")).not.toBeInTheDocument();
+  expect(within(drawer).getByTitle("TikTok original video player")).toHaveAttribute(
+    "loading",
+    "lazy",
+  );
   expect(fetch).not.toHaveBeenCalled();
 });
 it("opens an ungrouped approved proposal without calling it a narrative or an argument", async () => {
