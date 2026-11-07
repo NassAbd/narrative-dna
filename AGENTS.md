@@ -28,3 +28,7 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Narrative DNA architecture
+- UI talks only to the `NarrativeService` exported from `src/lib/narrative/index.ts`; never import mock data in components — so a live Oriane/OpenAI backend (server-side, keys never in browser) can replace the mock without UI changes.
+- All mock content lives in `src/lib/narrative/mock-data.ts`; never invent source URLs or timestamps.
