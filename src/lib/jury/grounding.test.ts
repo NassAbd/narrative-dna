@@ -98,3 +98,18 @@ it("returns no evidence for missing transcripts and ignores invalid provider tim
     })[0]?.startSeconds,
   ).toBe(null);
 });
+it("rejects a question presented as an argument without silently changing its discourse type", () => {
+  const text = "Comment maîtriser les risques de l'intelligence artificielle ?";
+  const source = { ...video, transcript: text, transcriptChunks: [] };
+  const candidate = {
+    ...claim,
+    ...passagesFor(source)[0]!,
+    type: "argument" as const,
+    formulation:
+      "La personne demande comment maîtriser les risques de l'intelligence artificielle.",
+  };
+  expect(checkClaim(candidate, [source]).semanticValidation.reasons).toContain(
+    "question_misclassified",
+  );
+  expect(checkClaim({ ...candidate, type: "question" }, [source]).status).toBe("candidate");
+});

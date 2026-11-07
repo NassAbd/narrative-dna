@@ -156,6 +156,11 @@ export function semanticReasons(claim: Claim): string[] {
   const formulation = normalized(claim.formulation);
   const quote = normalized(claim.quote);
   const reasons: string[] = [];
+  if (
+    claim.quote.trim().endsWith("?") &&
+    ["argument", "proposal", "objection"].includes(claim.type)
+  )
+    reasons.push("question_misclassified");
   for (const [label, pattern] of concepts)
     if (pattern.test(formulation) && !pattern.test(quote)) reasons.push(`unsupported_${label}`);
   const numbers = (s: string) =>

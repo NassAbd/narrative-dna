@@ -263,6 +263,8 @@ it("runs mocked real extraction stages with locally bound evidence and no human 
                   claims: [
                     {
                       passageId: "v1:0",
+                      topicRelevant: true,
+                      explicitSupport: true,
                       formulation: "La personne cherche un logement étudiant",
                       type: "question",
                     },
@@ -387,6 +389,8 @@ it("preserves fractional latency and leaves descriptions outside argumentative c
                 claims: [
                   {
                     passageId: `v${i}:0`,
+                    topicRelevant: true,
+                    explicitSupport: true,
                     formulation: "La personne décrit un logement à Paris.",
                     type: "description",
                   },
@@ -438,6 +442,8 @@ it("rejects unsupported group wording while preserving verified individual exper
               claims: [
                 {
                   passageId: `v${i}:0`,
+                  topicRelevant: true,
+                  explicitSupport: true,
                   formulation: "La personne juge son loyer trop cher.",
                   type: "experience",
                 },
@@ -497,6 +503,8 @@ it("keeps verified observations when grouping would exceed the aggregate model i
                 claims: [
                   {
                     passageId: `v${i}:0`,
+                    topicRelevant: true,
+                    explicitSupport: true,
                     formulation: "La personne juge son loyer trop cher.",
                     type: "experience",
                   },
@@ -519,4 +527,61 @@ it("keeps verified observations when grouping would exceed the aggregate model i
   expect(result.narratives).toEqual([]);
   expect(result.warnings).toContain("clustering_skipped_input_limit");
   expect(result.metrics.openaiRequests).toBe(1);
+});
+it("excludes claims the extractor marks off-topic or unsupported without another model review", async () => {
+  let calls = 0;
+  const fetcher = vi.fn<typeof fetch>(async () => {
+    if (calls++ === 0)
+      return Response.json({
+        data: {
+          results: [{ id: "v1", platform: "tiktok", media: [{ transcript: video.transcript }] }],
+        },
+      });
+    return Response.json({
+      choices: [
+        {
+          finish_reason: "stop",
+          message: {
+            content: JSON.stringify({
+              videos: [
+                {
+                  videoId: "v1",
+                  relevance: "relevant",
+                  genre: "non-fiction",
+                  speakerConfidence: "high",
+                  relevanceReason: "Housing request",
+                  claims: [
+                    {
+                      passageId: "v1:0",
+                      formulation: "Une description de la recherche de logement.",
+                      type: "description",
+                      topicRelevant: true,
+                      explicitSupport: true,
+                    },
+                    {
+                      passageId: "v1:0",
+                      formulation: "A different topical inference.",
+                      type: "argument",
+                      topicRelevant: false,
+                      explicitSupport: false,
+                    },
+                  ],
+                },
+              ],
+            }),
+          },
+        },
+      ],
+      usage: { prompt_tokens: 100, completion_tokens: 50 },
+    });
+  });
+  const result = await runPipeline(
+    { topic: "logement étudiant", platforms: ["tiktok"], language: "fr", dateRange: null },
+    secrets,
+    { fetcher, signal: AbortSignal.timeout(5000), stage: async () => {} },
+  );
+  expect(fetcher).toHaveBeenCalledTimes(2);
+  expect(result.individualObservations).toHaveLength(1);
+  expect(result.individualObservations[0]?.discourseType).toBe("description");
+  expect(result.warnings).toContain("rejected_claim");
 });
