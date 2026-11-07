@@ -42,6 +42,11 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 const preflight = await request("/session");
+const processingVersion = preflight.response.headers.get("x-narrative-version");
+assert(
+  processingVersion === "jury-v3-gpt4o-mini-2026-11-07",
+  "Corrected backend version is not deployed; no paid analysis attempted",
+);
 assert(
   preflight.value.available === true,
   "Live is not enabled or production bindings are unavailable",
@@ -123,6 +128,7 @@ assert(logout.response.ok, "Logout failed");
 const revoked = await request("/session");
 assert(revoked.value.authenticated === false, "Session revocation failed");
 const report = {
+  processingVersion,
   topic: query.topic,
   operations,
   remainingBefore: before,
