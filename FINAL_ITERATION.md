@@ -66,3 +66,9 @@ Official references:
 Public deployment: https://narrative-evidence-atlas.lovable.app/
 
 Final anonymous rollout verification is recorded below after publishing. No further paid verification will be performed.
+
+## Final anonymous deployment verification
+
+Published revision `9a47dc52b4781536f27ce0eea5ec74f94c4035b5` (deployment `139fc4ff-aad7-4915-9d48-dc0b913c00f9`) was verified without login. Public `/api/jury/config` returns HTTP200, v6, `available:false`. Explore opens normally. Its S03 drawer loads the real official iframe, preserves its quotation/context/Oriane frame and source metadata, and exposes the verified original publication link. Playback initially shows Play (no autoplay); a user-initiated click changed to Pause and advanced the timeline from 0 to 27. The safe frame remains below. No paid provider requests were made for this verification.
+
+A scan of 156 tracked/build files against the configured local credential values found no matches. Only the pre-existing untracked package-lock.json remains outside Git.
