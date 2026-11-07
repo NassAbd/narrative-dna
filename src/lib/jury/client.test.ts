@@ -87,3 +87,44 @@ it("fails closed with a concise error for malformed server sessions", async () =
   );
   await expect(client.session()).rejects.toThrow("Jury Live is temporarily unavailable.");
 });
+it("reports persisted stages and executes a queued job at most once", async () => {
+  vi.useFakeTimers();
+  try {
+    const job = {
+      id: "job-1",
+      status: "queued",
+      stage: "search",
+      completedStages: [],
+      cached: false,
+      remaining: 9,
+    };
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async (url) => {
+      if (String(url).endsWith("/run"))
+        return Response.json({ ...job, status: "failed", errorCode: "timeout" });
+      if (String(url) === "/api/jury/jobs") return Response.json(job);
+      return Response.json({
+        ...job,
+        status: "failed",
+        stage: "extract",
+        completedStages: ["search", "retrieve"],
+        errorCode: "timeout",
+      });
+    });
+    const progress = vi.fn();
+    const client = createJuryClient(fetcher);
+    const completion = expect(
+      client.analyze(
+        { topic: "arbitrary topic", platforms: ["tiktok"], language: "fr", dateRange: null },
+        { onProgress: progress },
+      ),
+    ).rejects.toThrow("Analysis timed out.");
+    await vi.advanceTimersByTimeAsync(1000);
+    await completion;
+    expect(fetcher.mock.calls.filter(([url]) => String(url).endsWith("/run"))).toHaveLength(1);
+    expect(progress).toHaveBeenCalledWith({ step: "collect", status: "done" });
+    expect(progress).toHaveBeenCalledWith({ step: "extract", status: "active" });
+    expect(progress).not.toHaveBeenCalledWith({ step: "verify", status: "done" });
+  } finally {
+    vi.useRealTimers();
+  }
+});
