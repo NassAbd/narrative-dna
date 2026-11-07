@@ -14,13 +14,176 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      jury_control: {
+        Row: {
+          active_job: string | null
+          id: boolean
+          lease_until: string | null
+          openai_reserved: number
+          oriane_reserved: number
+          used: number
+        }
+        Insert: {
+          active_job?: string | null
+          id?: boolean
+          lease_until?: string | null
+          openai_reserved?: number
+          oriane_reserved?: number
+          used?: number
+        }
+        Update: {
+          active_job?: string | null
+          id?: boolean
+          lease_until?: string | null
+          openai_reserved?: number
+          oriane_reserved?: number
+          used?: number
+        }
+        Relationships: []
+      }
+      jury_job_access: {
+        Row: {
+          cached: boolean
+          idempotency_key: string
+          job_id: string
+          session_id: string
+        }
+        Insert: {
+          cached?: boolean
+          idempotency_key: string
+          job_id: string
+          session_id: string
+        }
+        Update: {
+          cached?: boolean
+          idempotency_key?: string
+          job_id?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jury_job_access_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jury_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jury_job_access_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "jury_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jury_jobs: {
+        Row: {
+          cache_key: string
+          cancel_requested: boolean
+          completed_stages: Json
+          deadline: string
+          error_code: string | null
+          id: string
+          idempotency_key: string
+          query: Json
+          result: Json | null
+          run_token: string | null
+          session_id: string
+          stage: string
+          status: string
+        }
+        Insert: {
+          cache_key: string
+          cancel_requested?: boolean
+          completed_stages?: Json
+          deadline: string
+          error_code?: string | null
+          id?: string
+          idempotency_key: string
+          query: Json
+          result?: Json | null
+          run_token?: string | null
+          session_id: string
+          stage?: string
+          status?: string
+        }
+        Update: {
+          cache_key?: string
+          cancel_requested?: boolean
+          completed_stages?: Json
+          deadline?: string
+          error_code?: string | null
+          id?: string
+          idempotency_key?: string
+          query?: Json
+          result?: Json | null
+          run_token?: string | null
+          session_id?: string
+          stage?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jury_jobs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "jury_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jury_login_windows: {
+        Row: {
+          attempts: number
+          bucket: string
+          expires_at: string
+        }
+        Insert: {
+          attempts?: number
+          bucket: string
+          expires_at: string
+        }
+        Update: {
+          attempts?: number
+          bucket?: string
+          expires_at?: string
+        }
+        Relationships: []
+      }
+      jury_sessions: {
+        Row: {
+          credential_version: string
+          csrf_hash: string
+          expires_at: string
+          id: string
+          revoked: boolean
+          token_hash: string
+        }
+        Insert: {
+          credential_version: string
+          csrf_hash: string
+          expires_at: string
+          id?: string
+          revoked?: boolean
+          token_hash: string
+        }
+        Update: {
+          credential_version?: string
+          csrf_hash?: string
+          expires_at?: string
+          id?: string
+          revoked?: boolean
+          token_hash?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      jury_backend: { Args: { p_action: string; p_args?: Json }; Returns: Json }
     }
     Enums: {
       [_ in never]: never
