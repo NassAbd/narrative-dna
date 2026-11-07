@@ -32,9 +32,21 @@ it("rejects internal IDs, mismatched posts and unsafe publication URLs", () => {
   expect(VerifiedTikTokSourceSchema.safeParse(valid).success).toBe(true);
   expect(
     originalVideoUrl({
+      videoId: "cnt_unknown",
       platform: "tiktok",
       tiktokPostId: valid.tiktokPostId,
       sourceUrl: "https://evil.invalid",
+    }),
+  ).toBeUndefined();
+});
+
+it("does not expose a plausible but unverified publication", () => {
+  expect(
+    originalVideoUrl({
+      videoId: "cnt_unknown",
+      platform: "tiktok",
+      tiktokPostId: "7685824397072026912",
+      sourceUrl: "https://www.tiktok.com/@jeunesinsoumis/video/7685824397072026912",
     }),
   ).toBeUndefined();
 });

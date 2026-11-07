@@ -99,7 +99,7 @@ export function EvidenceDrawer({ clip, narrative, onClose }: Props) {
                   </p>
                 )}
               </div>
-              {clip.platform === "tiktok" && validTikTokPostId(clip.tiktokPostId) && (
+              {sourceUrl && clip.platform === "tiktok" && validTikTokPostId(clip.tiktokPostId) && (
                 <TikTokPlayer
                   key={clip.tiktokPostId}
                   postId={clip.tiktokPostId}

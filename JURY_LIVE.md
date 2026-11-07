@@ -1,3 +1,5 @@
+> Current bounded iteration: see [FINAL_ITERATION.md](FINAL_ITERATION.md). Current global allocation is 5/10; Live stays disabled after the single v6 smoke returned insufficient evidence in 9.57 seconds. Playback/link coverage is documented there.
+
 # Jury Live operations and verification
 
 Public app: https://narrative-evidence-atlas.lovable.app/

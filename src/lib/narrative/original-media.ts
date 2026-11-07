@@ -43,11 +43,19 @@ export function verifiedOriginalMedia(
   return source ? { tiktokPostId: source.tiktokPostId, sourceUrl: source.canonicalUrl } : {};
 }
 export function originalVideoUrl(clip: {
+  videoId: string;
   platform: Platform | null;
   tiktokPostId?: string;
   sourceUrl?: string;
 }): string | undefined {
-  return clip.platform === "tiktok" &&
+  const verified = sources.find(
+    (s) =>
+      s.orianeId === clip.videoId &&
+      s.tiktokPostId === clip.tiktokPostId &&
+      s.canonicalUrl === clip.sourceUrl,
+  );
+  return verified &&
+    clip.platform === "tiktok" &&
     validTikTokPostId(clip.tiktokPostId) &&
     clip.sourceUrl &&
     validCanonical(clip.sourceUrl, clip.tiktokPostId)
