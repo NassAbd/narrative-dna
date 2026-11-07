@@ -107,3 +107,7 @@ Reduce the extraction input to 3–5 substantive videos, cap passage/context vol
 `src/lib/jury/`: contracts, runtime result schema, source normalization/grounding, authentication, private RPC transport, bounded extraction/grouping runner, client polling and backend/core tests. `src/server.ts`: same-origin API boundary. `src/components/narrative/JuryLivePanel.tsx`, SearchPanel, IndividualObservations, EvidenceDrawer and `src/routes/index.tsx`: protected UI and accurate provenance. `drizzle/migrations/` and generated Supabase types were created through Lovable. `scripts/jury-smoke.mjs` performs bounded verification. Precomputed approved-demo.json was unchanged. The pre-existing untracked package-lock.json was not committed.
 
 Build warnings: the existing large browser chunk and six React Refresh warnings remain. npm audit also reports existing/transitive advisories (including development tooling and Zod 3); request/body/input limits mitigate collection expansion, but this work is not a dependency-security certification. No broad dependency upgrades were performed during the deadline iteration.
+
+## Final disabled rollout
+
+Deployment `1f04af2e-1830-4469-a0ca-0325f12762e2`, revision `ad7e62d`, was verified publicly: `/api/jury/config` returns HTTP 200 with `available:false`; `/api/jury/session` returns HTTP 200 with `available:false,authenticated:false`, processing header v5. Anonymous Explore still renders two groups and nine approved cards. Provider keys remain configured server-side; activation is deliberately off.

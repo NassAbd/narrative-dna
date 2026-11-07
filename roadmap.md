@@ -8,6 +8,6 @@
 - [x] Initial live run completed; repeated corrected extraction runs failed within bounded deadlines.
 - [x] Paid tests stopped: four reservations, six remaining; no active job.
 - [ ] Reliable current extraction and meaningful live clustering remain unvalidated.
-- [ ] Jury Live remains NO-GO and must be disabled in production; verify disabled rollout.
+- [x] Jury Live is disabled in production; config/session return unavailable. Explore remains operational.
 
 See JURY_LIVE.md for measurements, failures, safeguards and the smallest next step.
