@@ -1,6 +1,6 @@
 # Narrative DNA
 
-Build Narrative DNA, a polished desktop-first editorial intelligence web app for journalists. Its purpose is to reveal the specific arguments and narratives expressed in social videos about a public-interest topic, each backed by source video evidence. Design: premium investigative newsroom, charcoal and warm off-white surfaces, restrained violet accents, elegant typography, strong hierarchy, polished responsive layout. Create: (1) search with topic, platform and date controls; (2) real-step progress state; (3) results with 3–5 narrative sections, each titled as a precise argumentative claim, each with a horizontal carousel of 3–5 video evidence cards; (4) evidence detail drawer showing literal quote, time range, creator, platform, date and frame; (5) empty/error states. Use clearly labeled MOCK data about housing in France. Define reusable TypeScript types and a typed mock service. No external API calls, authentication, payments or database. Keep all mock data in one replaceable module. Ensure keyboard-accessible controls and mobile-friendly cards. Do not invent actual source URLs.
+An editorial demonstration of housing narratives in France, using a precomputed analysis of real Oriane videos. The current release contains two narrative groups and three ungrouped student-housing observations: nine human-approved claims from five source videos. Narrative titles and summaries remain editorial drafts.
 
 This project was built with [Lovable](https://lovable.dev).
 
@@ -22,3 +22,30 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Approved precomputed demo
+
+Run `npm run dev -- --host 127.0.0.1 --port 5184`, open the local URL and choose **View precomputed analysis**. The topic and platform are fixed; live search is not connected. No Oriane/OpenAI keys or API calls are required.
+
+The UI accesses data through `NarrativeService` in `src/lib/narrative/index.ts`. The default service validates the curated public payload in `approved-demo.json` through `ValidatedPayloadSchema`, then adapts it to `AnalysisResult`, `Narrative` and `EvidenceClip`. This public projection contains only the nine approved claims and their exact source evidence. It omits local reviewer identities, fingerprints, other candidates, API responses and experimental diagnostics. Platform labels are copied from the matching normalized Oriane records; no additional metadata is reconstructed.
+
+Each narrative counts distinct video IDs, not claim cards. The three ungrouped claims are explicitly individual observations from one source, never a third narrative. Evidence drawers preserve exact original quotes, bounded context, source IDs and fractional timestamps. Creator, publication date, original link and frame remain unavailable when absent. No publication period is inferred from the collection date. Counts describe the approved evidence selection, not the full corpus or public opinion.
+
+Mock data remains in its own module and is opt-in for local development only:
+
+```sh
+VITE_NARRATIVE_MODE=mock npm run dev
+```
+
+Production always uses the approved precomputed service; mock evidence is excluded from the production browser bundle. Never use a `VITE_` variable for secrets.
+
+## Verification and deployment
+
+```sh
+npm run typecheck
+npm run lint
+npm test
+npm run build
+```
+
+Tested with Node 24.14.0. Production output is a TanStack Start/Nitro Cloudflare worker (`.output/server/wrangler.json`) and browser assets (`.output/public`). Use the existing Lovable deployment flow or a compatible Cloudflare deployment; this is not a plain static-site export. No provider credentials are required for this stage. See [DEPLOYMENT.md](DEPLOYMENT.md) for the local verification report and remaining limitations.

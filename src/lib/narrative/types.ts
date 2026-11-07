@@ -13,8 +13,12 @@ export interface DateRange {
 export interface SearchQuery {
   topic: string;
   platforms: Platform[];
-  dateRange: DateRange;
+  dateRange: DateRange | null;
 }
+
+export type AnalysisMode = "mock" | "live" | "precomputed";
+export type DiscourseType =
+  "argument" | "experience" | "proposal" | "objection" | "question" | "description";
 
 export type EvidenceSourceType = "transcript" | "onScreenText";
 
@@ -33,14 +37,17 @@ export interface EvidenceClip {
   endSec: number | null;
   sourceType: EvidenceSourceType;
   transcriptContext?: string;
-  creator: Creator;
-  platform: Platform;
+  creator: Creator | null;
+  platform: Platform | null;
   /** ISO date */
-  publishedAt: string;
+  publishedAt: string | null;
   /** Only when provided by the source. Never invented. */
   sourceUrl?: string;
   frameUrl?: string;
   frameTimestampSec?: number;
+  formulation?: string;
+  discourseType?: DiscourseType;
+  provenance?: "precomputed" | "mock";
 }
 
 export interface Narrative {
@@ -54,18 +61,20 @@ export interface Narrative {
 }
 
 export interface Corpus {
+  approvedClaimCount?: number;
   videosFound: number;
   videosAnalyzed: number;
   platforms: Platform[];
-  dateRange: DateRange;
+  dateRange: DateRange | null;
 }
 
 export interface AnalysisResult {
   query: SearchQuery;
   corpus: Corpus;
+  individualObservations?: EvidenceClip[];
   /** 0 to 5 narratives */
   narratives: Narrative[];
-  mode: "mock" | "live";
+  mode: AnalysisMode;
 }
 
 export type StepId = "collect" | "retrieve" | "extract" | "cluster" | "verify";
@@ -85,7 +94,7 @@ export interface AnalyzeOptions {
 }
 
 export interface NarrativeService {
-  readonly mode: "mock" | "live";
+  readonly mode: AnalysisMode;
   analyze(query: SearchQuery, options?: AnalyzeOptions): Promise<AnalysisResult>;
 }
 

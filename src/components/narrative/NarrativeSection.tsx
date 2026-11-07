@@ -35,14 +35,25 @@ export function NarrativeSection({ narrative, index, videosAnalyzed, onOpen }: P
           </h2>
           <p className="mt-3 text-muted-foreground">{narrative.summary}</p>
           <p className="mt-4 font-mono text-xs uppercase tracking-wider">
-            <span className="text-primary">{narrative.supportingVideoCount}</span> of {videosAnalyzed} analyzed videos mention this argument
+            <span className="text-primary">{narrative.supportingVideoCount}</span> of{" "}
+            {videosAnalyzed} represented videos support this group
           </p>
         </div>
         <div className="hidden items-start gap-2 md:flex">
-          <button type="button" onClick={() => scroll(-1)} aria-label="Scroll evidence left" className="rounded-full border border-border p-2 hover:border-primary focus-visible:outline-2 focus-visible:outline-ring">
+          <button
+            type="button"
+            onClick={() => scroll(-1)}
+            aria-label="Scroll evidence left"
+            className="rounded-full border border-border p-2 hover:border-primary focus-visible:outline-2 focus-visible:outline-ring"
+          >
             <ChevronLeft className="size-4" />
           </button>
-          <button type="button" onClick={() => scroll(1)} aria-label="Scroll evidence right" className="rounded-full border border-border p-2 hover:border-primary focus-visible:outline-2 focus-visible:outline-ring">
+          <button
+            type="button"
+            onClick={() => scroll(1)}
+            aria-label="Scroll evidence right"
+            className="rounded-full border border-border p-2 hover:border-primary focus-visible:outline-2 focus-visible:outline-ring"
+          >
             <ChevronRight className="size-4" />
           </button>
         </div>
@@ -55,7 +66,13 @@ export function NarrativeSection({ narrative, index, videosAnalyzed, onOpen }: P
       >
         {narrative.evidence.map((clip, i) => (
           <div role="listitem" key={clip.id} onKeyDown={(e) => onKey(e, i)} className="flex">
-            <EvidenceCard ref={(el) => { cards.current[i] = el; }} clip={clip} onOpen={() => onOpen(clip, narrative)} />
+            <EvidenceCard
+              ref={(el) => {
+                cards.current[i] = el;
+              }}
+              clip={clip}
+              onOpen={() => onOpen(clip, narrative)}
+            />
           </div>
         ))}
       </div>

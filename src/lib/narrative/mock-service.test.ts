@@ -57,7 +57,9 @@ describe("mock narrative service", () => {
   it("emits an error step and rejects on failure", async () => {
     const events: ProgressEvent[] = [];
     await expect(
-      createMockNarrativeService(0).analyze(q({ topic: "error" }), { onProgress: (e) => events.push(e) }),
+      createMockNarrativeService(0).analyze(q({ topic: "error" }), {
+        onProgress: (e) => events.push(e),
+      }),
     ).rejects.toThrow();
     expect(events.some((e) => e.status === "error")).toBe(true);
   });

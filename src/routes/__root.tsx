@@ -79,7 +79,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Narrative DNA" },
-      { name: "description", content: "Evidence-backed narrative analysis of social videos for journalists." },
+      {
+        name: "description",
+        content: "Evidence-backed narrative analysis of social videos for journalists.",
+      },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

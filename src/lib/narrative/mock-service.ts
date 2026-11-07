@@ -1,5 +1,12 @@
 import { MOCK_CORPUS_COUNTS, MOCK_NARRATIVES, MOCK_TOPIC_KEYWORDS } from "./mock-data";
-import type { AnalysisResult, AnalyzeOptions, NarrativeService, ProgressEvent, SearchQuery, StepId } from "./types";
+import type {
+  AnalysisResult,
+  AnalyzeOptions,
+  NarrativeService,
+  ProgressEvent,
+  SearchQuery,
+  StepId,
+} from "./types";
 import { ANALYSIS_STEPS } from "./types";
 
 export class MockAnalysisError extends Error {}
@@ -17,7 +24,8 @@ const sleep = (ms: number, signal?: AbortSignal) =>
 /** Pure mock computation, exported for tests. */
 export function computeMockResult(query: SearchQuery): AnalysisResult {
   const topic = query.topic.toLowerCase();
-  if (topic.includes("error")) throw new MockAnalysisError("The mock analysis failed (simulated error).");
+  if (topic.includes("error"))
+    throw new MockAnalysisError("The mock analysis failed (simulated error).");
 
   const matchesTopic = MOCK_TOPIC_KEYWORDS.some((k) => topic.includes(k));
   const platforms = query.platforms;
@@ -27,16 +35,30 @@ export function computeMockResult(query: SearchQuery): AnalysisResult {
   const narratives = !matchesTopic
     ? []
     : MOCK_NARRATIVES.map((n) => {
-        const evidence = n.evidence.filter((e) => platforms.includes(e.platform));
+        const evidence = n.evidence.filter(
+          (e) => e.platform !== null && platforms.includes(e.platform),
+        );
         const ratio = evidence.length / n.evidence.length;
-        return { ...n, evidence, supportingVideoCount: Math.max(evidence.length ? 1 : 0, Math.round(n.supportingVideoCount * ratio)) };
+        return {
+          ...n,
+          evidence,
+          supportingVideoCount: Math.max(
+            evidence.length ? 1 : 0,
+            Math.round(n.supportingVideoCount * ratio),
+          ),
+        };
       })
         .filter((n) => n.evidence.length > 0)
         .slice(0, 5);
 
   return {
     query,
-    corpus: { videosFound: matchesTopic ? found : 0, videosAnalyzed: matchesTopic ? analyzed : 0, platforms, dateRange: query.dateRange },
+    corpus: {
+      videosFound: matchesTopic ? found : 0,
+      videosAnalyzed: matchesTopic ? analyzed : 0,
+      platforms,
+      dateRange: query.dateRange,
+    },
     narratives,
     mode: "mock",
   };

@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "1.0",
+  "status": "narratives_require_editorial_review",
+  "claims": [
+    {
+      "id": "S01",
+      "videoId": "cnt_356bd2866bc6b7f53e897a26ad82",
+      "passageId": "9",
+      "formulation": "L'intervenant propose de réaugmenter les APL et de baisser les loyers pour améliorer les conditions de vie des étudiants.",
+      "type": "proposal",
+      "quote": "Et donc nous, ce qu'on dit avec les jeunes insoumis, c'est qu'on veut révaloriser les APL, il faut réaugmenter les APL, il faut baisser les loyers,",
+      "transcriptContext": "ne crise du logement étudiante importante, où des milliers d'étudiantes et étudiants se retrouvent sans logement, et où les loyers sont à des prix exorbitants. Et donc nous, ce qu'on dit avec les jeunes insoumis, c'est qu'on veut révaloriser les APL, il faut réaugmenter les APL, il faut baisser les loyers, il faut du logement étudiant pour que tous les étudiantes et les étudiants puissent vivre dignement et redonner les conditions matérielles d'existence à LSE.",
+      "startSeconds": 64.98,
+      "endSeconds": 71.56,
+      "platform": "tiktok",
+      "approval": {
+        "origin": "explicit_human_decision"
+      }
+    },
+    {
+      "id": "S02",
+      "videoId": "cnt_356bd2866bc6b7f53e897a26ad82",
+      "passageId": "10",
+      "formulation": "L'intervenant propose de développer le logement étudiant afin que les étudiantes et étudiants puissent vivre dignement.",
+      "type": "proposal",
+      "quote": "il faut du logement étudiant pour que tous les étudiantes et les étudiants puissent vivre dignement et redonner les conditions matérielles d'existence à LSE.",
+      "transcriptContext": "xorbitants. Et donc nous, ce qu'on dit avec les jeunes insoumis, c'est qu'on veut révaloriser les APL, il faut réaugmenter les APL, il faut baisser les loyers, il faut du logement étudiant pour que tous les étudiantes et les étudiants puissent vivre dignement et redonner les conditions matérielles d'existence à LSE.",
+      "startSeconds": 72.08,
+      "endSeconds": 79.86,
+      "platform": "tiktok",
+      "approval": {
+        "origin": "explicit_human_decision"
+      }
+    },
+    {
+      "id": "S03",
+      "videoId": "cnt_70048414b09bf31bab7354732940",
+      "passageId": "22",
+      "formulation": "La personne présente l'encadrement des loyers comme important pour la capacité d'avoir un logement dans une grande ville.",
+      "type": "argument",
+      "quote": "Ce précieux encadrement des loyers, duquel dépend pour beaucoup la capacité d'avoir un logement dans une grande ville,",
+      "transcriptContext": "er une amende bien salée et te rembourser le trop perçu. Bon, maintenant que tous les proprio véreux de France me détestent, faut que je vous dise l'essentiel. Ce précieux encadrement des loyers, duquel dépend pour beaucoup la capacité d'avoir un logement dans une grande ville, eh bien il pourrait bientôt disparaître. En gros, à la base, ce dispositif c'était un test. Un peu comme une grande expérience sociale mis en place dans près d",
+      "startSeconds": 60.476,
+      "endSeconds": 65.356,
+      "platform": "tiktok",
+      "approval": {
+        "origin": "explicit_human_decision"
+      }
+    },
+    {
+      "id": "S04",
+      "videoId": "cnt_e6e73aa987c6597c9339558d6a8c",
+      "passageId": "0",
+      "formulation": "La personne dit commencer à perdre patience après bientôt trois mois de recherche de maison à louer avec son compagnon.",
+      "type": "experience",
+      "quote": "Je commence à perdre patience.",
+      "transcriptContext": "Je commence à perdre patience. Mais vraiment, là, dites-vous que ça fait bientôt 3 mois qu'avec mon copain, on cherche une maison à louer entre Calais et Dunkerque. Sauf que rien, pas de rép",
+      "startSeconds": 0.382,
+      "endSeconds": 2.162,
+      "platform": "tiktok",
+      "approval": {
+        "origin": "explicit_human_decision"
+      }
+    },
+    {
+      "id": "S05",
+      "videoId": "cnt_e6e73aa987c6597c9339558d6a8c",
+      "passageId": "3",
+      "formulation": "La personne dit ne recevoir aucune réponse dans sa recherche et ajoute que les agences ne répondent pas.",
+      "type": "experience",
+      "quote": "Sauf que rien, pas de réponse.",
+      "transcriptContext": "mmence à perdre patience. Mais vraiment, là, dites-vous que ça fait bientôt 3 mois qu'avec mon copain, on cherche une maison à louer entre Calais et Dunkerque. Sauf que rien, pas de réponse. Les agences ne répondent pas. Vraiment, je ne comprends pas. J'ai besoin qu'on m'éclaire comment on fait en 2026 pour louer une maison. Genre, c'est devenu si ",
+      "startSeconds": 11.762,
+      "endSeconds": 15.102,
+      "platform": "tiktok",
+      "approval": {
+        "origin": "explicit_human_decision"
+      }
+    },
+    {
+      "id": "S07",
+      "videoId": "cnt_fb4c8aa6e9ebe7aaf819f08ef124",
+      "passageId": "28",
+      "formulation": "Le reportage pose la question de savoir si l'encadrement des loyers est une fausse bonne idée ou une vraie solution pour favoriser l'accès au logement.",
+      "type": "question",
+      "quote": "L'encadrement des loyers, fausse bonne idée ou vraie solution pour favoriser l'accès au logement ?",
+      "transcriptContext": "Certaines annonces, on a 250 candidatures en 24 heures. Donc ça devient infernal à gérer. et pour les candidats locataires qui cherchent, c'est très difficile. L'encadrement des loyers, fausse bonne idée ou vraie solution pour favoriser l'accès au logement ? Au gouvernement de trancher dans les prochaines semaines.",
+      "startSeconds": 115.46,
+      "endSeconds": 121,
+      "platform": "tiktok",
+      "approval": {
+        "origin": "explicit_human_decision"
+      }
+    },
+    {
+      "id": "S09",
+      "videoId": "cnt_fb4c8aa6e9ebe7aaf819f08ef124",
+      "passageId": "8",
+      "formulation": "Le reportage indique que la ville demande depuis quatre ans au gouvernement de pouvoir appliquer cette mesure, sans succès.",
+      "type": "description",
+      "quote": "Depuis 4 ans, la ville demande au gouvernement de pouvoir appliquer cette mesure en vain, une situation jugée incompréhensible au vu du prix du marché locatif.",
+      "transcriptContext": "ssive et qui, en plus, dans les premières victimes, sont les populations les plus précaires parce que les loyers les plus élevés sont sur les petites surfaces. Depuis 4 ans, la ville demande au gouvernement de pouvoir appliquer cette mesure en vain, une situation jugée incompréhensible au vu du prix du marché locatif. La personne qui va louer aujourd'hui un 55 mètres carrés le paiera 500 euros plus cher par an que celle qui est déjà dans son 55 mètres carrés. Donc ça pousse ",
+      "startSeconds": 37.5,
+      "endSeconds": 46.24,
+      "platform": "tiktok",
+      "approval": {
+        "origin": "explicit_human_decision"
+      }
+    },
+    {
+      "id": "S10",
+      "videoId": "cnt_356bd2866bc6b7f53e897a26ad82",
+      "passageId": "8",
+      "formulation": "L'intervenant affirme que des milliers d'étudiantes et d'étudiants se retrouvent sans logement et que les loyers sont exorbitants.",
+      "type": "description",
+      "quote": "où des milliers d'étudiantes et étudiants se retrouvent sans logement, et où les loyers sont à des prix exorbitants.",
+      "transcriptContext": "carité et puisse vivre et étudier dignement. Et puis sur la question des APL, ça s'inscrit dans un contexte, on vit une crise du logement étudiante importante, où des milliers d'étudiantes et étudiants se retrouvent sans logement, et où les loyers sont à des prix exorbitants. Et donc nous, ce qu'on dit avec les jeunes insoumis, c'est qu'on veut révaloriser les APL, il faut réaugmenter les APL, il faut baisser les loyers, il faut du ",
+      "startSeconds": 59.02,
+      "endSeconds": 64.66,
+      "platform": "tiktok",
+      "approval": {
+        "origin": "explicit_human_decision"
+      }
+    },
+    {
+      "id": "S11",
+      "videoId": "cnt_8edc76c0394ea74f83d4452b916c",
+      "passageId": "4",
+      "formulation": "La personne affirme que trouver un appartement à Paris coûte très cher.",
+      "type": "description",
+      "quote": "Trouver un appart à Paris, c'est très cher.",
+      "transcriptContext": "pas de plan. Et je suis très bien placé pour vous le dire. J'ai emménagé solo à Paris à 17 ans alors que je n'avais aucun plan. Donc des trucs à dire, j'en ai. Trouver un appart à Paris, c'est très cher. Ça, tout le monde le sait. Même si tu as beaucoup d'argent dans un appart, tu n'es pas sûr d'en trouver. Si vous n'avez pas un dossier en béton armé, j'ai pris",
+      "startSeconds": 8.481,
+      "endSeconds": 10.061,
+      "platform": "tiktok",
+      "approval": {
+        "origin": "explicit_human_decision"
+      }
+    }
+  ],
+  "narratives": [
+    {
+      "id": "R1",
+      "title": "L’encadrement des loyers est présenté comme un levier d’accès au logement",
+      "summary": "Un reportage met en débat l’encadrement des loyers comme solution pour améliorer l’accès au logement ; il indique que la ville le demande au gouvernement depuis quatre ans sans obtenir de feu vert, et une autre personne présente cette mesure comme importante pour pouvoir se loger dans une grande ville.",
+      "claimIds": ["S07", "S09", "S03"]
+    },
+    {
+      "id": "R2",
+      "title": "Trouver un logement reste difficile et très coûteux",
+      "summary": "Une personne raconte perdre patience après presque trois mois de recherche d’une maison à louer avec son compagnon et dit ne recevoir aucune réponse des agences. Une autre affirme que trouver un appartement à Paris coûte très cher.",
+      "claimIds": ["S04", "S05", "S11"]
+    }
+  ],
+  "unclusteredClaimIds": ["S01", "S02", "S10"]
+}
