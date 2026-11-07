@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  LIVE_VERSION,
   isEnabled,
   LoginSchema,
   SubmitSchema,
@@ -28,6 +29,7 @@ const reply = (data: unknown, status = 200, cookie?: string) =>
       "content-type": "application/json",
       "cache-control": "no-store",
       "x-content-type-options": "nosniff",
+      "x-narrative-version": LIVE_VERSION,
       ...(cookie ? { "set-cookie": cookie } : {}),
     },
   });
