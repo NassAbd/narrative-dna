@@ -195,12 +195,12 @@ it("bounds transcript inputs without inventing timestamps and rejects unsupporte
     Array.from({ length: 10 }, (_, i) => ({
       ...video,
       source: { ...video.source, orianeId: `${i}` },
-      transcript: "x".repeat(9000),
+      transcript: "Ce récit contient plusieurs mots substantifs. ".repeat(220),
     })),
     warnings,
   );
-  expect(bounded.every((v) => (v.transcript?.length ?? 0) <= 6000)).toBe(true);
-  expect(bounded.reduce((n, v) => n + (v.transcript?.length ?? 0), 0)).toBe(40000);
+  expect(bounded.every((v) => (v.transcript?.length ?? 0) <= 2000)).toBe(true);
+  expect(bounded.reduce((n, v) => n + (v.transcript?.length ?? 0), 0)).toBe(8000);
   expect(passagesFor(bounded[0] ?? video)[0]?.startSeconds).toBe(null);
   const p = passagesFor(video)[0];
   if (!p) throw new Error("missing fixture");
@@ -262,7 +262,7 @@ it("runs mocked real extraction stages with locally bound evidence and no human 
                   relevanceReason: "topic matched",
                   claims: [
                     {
-                      passageId: "v1:0",
+                      passageId: "p0",
                       topicRelevant: true,
                       explicitSupport: true,
                       formulation: "La personne cherche un logement étudiant",
@@ -388,7 +388,7 @@ it("preserves fractional latency and leaves descriptions outside argumentative c
                 relevanceReason: "Explicit housing description",
                 claims: [
                   {
-                    passageId: `v${i}:0`,
+                    passageId: `p${i}`,
                     topicRelevant: true,
                     explicitSupport: true,
                     formulation: "La personne décrit un logement à Paris.",
@@ -441,7 +441,7 @@ it("rejects unsupported group wording while preserving verified individual exper
               relevanceReason: "A personal experience",
               claims: [
                 {
-                  passageId: `v${i}:0`,
+                  passageId: `p${i}`,
                   topicRelevant: true,
                   explicitSupport: true,
                   formulation: "La personne juge son loyer trop cher.",
@@ -494,7 +494,7 @@ it("keeps verified observations when grouping would exceed the aggregate model i
           finish_reason: "stop",
           message: {
             content: JSON.stringify({
-              videos: Array.from({ length: 8 }, (_, i) => ({
+              videos: Array.from({ length: 4 }, (_, i) => ({
                 videoId: `v${i}`,
                 relevance: "relevant",
                 genre: "non-fiction",
@@ -502,7 +502,7 @@ it("keeps verified observations when grouping would exceed the aggregate model i
                 relevanceReason: "Personal housing experience",
                 claims: [
                   {
-                    passageId: `v${i}:0`,
+                    passageId: `p${i}`,
                     topicRelevant: true,
                     explicitSupport: true,
                     formulation: "La personne juge son loyer trop cher.",
@@ -523,7 +523,7 @@ it("keeps verified observations when grouping would exceed the aggregate model i
     { fetcher, signal: AbortSignal.timeout(5000), stage: async () => {} },
   );
   expect(fetcher).toHaveBeenCalledTimes(2);
-  expect(result.individualObservations).toHaveLength(8);
+  expect(result.individualObservations).toHaveLength(4);
   expect(result.narratives).toEqual([]);
   expect(result.warnings).toContain("clustering_skipped_input_limit");
   expect(result.metrics.openaiRequests).toBe(1);
@@ -552,14 +552,14 @@ it("excludes claims the extractor marks off-topic or unsupported without another
                   relevanceReason: "Housing request",
                   claims: [
                     {
-                      passageId: "v1:0",
+                      passageId: "p0",
                       formulation: "Une description de la recherche de logement.",
                       type: "description",
                       topicRelevant: true,
                       explicitSupport: true,
                     },
                     {
-                      passageId: "v1:0",
+                      passageId: "p0",
                       formulation: "A different topical inference.",
                       type: "argument",
                       topicRelevant: false,
@@ -599,4 +599,148 @@ it("uses Workers-compatible manual redirects and never follows a provider redire
   ).rejects.toThrow("oriane_unavailable");
   expect(fetcher).toHaveBeenCalledTimes(1);
   expect(fetcher.mock.calls[0]?.[0]).toBe(SEARCH_URL);
+});
+it("bounds extraction to four substantive videos with compact whole source passages", () => {
+  const inputs = Array.from({ length: 10 }, (_, i) => ({
+    ...video,
+    source: { ...video.source, orianeId: `bounded-${i}` },
+    transcript:
+      "Introduction neutre. ".repeat(130) + ` Le logement étudiant manque pour la personne ${i}.`,
+    transcriptChunks: [],
+  }));
+  const warnings: string[] = [];
+  const bounded = boundVideos(inputs, warnings, "logement étudiant");
+  expect(bounded).toHaveLength(4);
+  expect(bounded.every((v) => (v.transcript?.length ?? 0) <= 2000)).toBe(true);
+  expect(bounded.reduce((sum, v) => sum + (v.transcript?.length ?? 0), 0)).toBeLessThanOrEqual(
+    8000,
+  );
+  expect(bounded.every((v) => v.transcript?.includes("logement étudiant"))).toBe(true);
+  expect(warnings).toContain("transcript_truncated");
+});
+it("keeps the actual chunk times when a selected topic passage occurs late in a transcript", () => {
+  const quote = "Mon loyer est trop cher et je raconte mon expérience de location.";
+  const intro = "Une introduction sans rapport avec le sujet. ".repeat(100);
+  const original = {
+    ...video,
+    transcript: intro + quote,
+    transcriptChunks: [
+      { text: intro, startSeconds: 0, endSeconds: 72.5 },
+      { text: quote, startSeconds: 72.5, endSeconds: 80 },
+    ],
+  };
+  const [bounded] = boundVideos([original], [], "loyer");
+  expect(bounded).toBeDefined();
+  const passage = passagesFor(bounded!)[0]!;
+  expect(passage.quote).toBe(quote);
+  expect(passage.startSeconds).toBe(72.5);
+  expect(passage.endSeconds).toBe(80);
+  expect(
+    checkClaim(
+      {
+        ...passage,
+        videoId: video.source.orianeId,
+        formulation: "La personne trouve son loyer trop cher.",
+        type: "experience",
+      },
+      [bounded!],
+    ).status,
+  ).toBe("candidate");
+});
+it("does not turn an oversized timed passage into an apparently untimed quotation", () => {
+  const text = "Cette expérience est présentée précisément dans ce passage. ".repeat(50);
+  expect(
+    boundVideos(
+      [
+        {
+          ...video,
+          transcript: text,
+          transcriptChunks: [{ text, startSeconds: 12, endSeconds: 80 }],
+        },
+      ],
+      [],
+      "expérience",
+    ),
+  ).toEqual([]);
+});
+it("sends a compact extraction envelope with original video identities and short source-bound aliases", async () => {
+  const sentence = "Je présente mon expérience du logement étudiant dans cet extrait précis.";
+  const fetcher = vi.fn<typeof fetch>(async (_url, init) => {
+    if (fetcher.mock.calls.length === 1)
+      return Response.json({
+        data: {
+          results: Array.from({ length: 10 }, (_, i) => ({
+            id: `synthetic-original-video-${i}`,
+            platform: "tiktok",
+            media: [
+              {
+                transcript: Array.from({ length: 70 }, () => sentence).join(" "),
+                transcriptChunks: Array.from({ length: 70 }, (_, j) => ({
+                  text: sentence,
+                  startSeconds: j * 3,
+                  endSeconds: j * 3 + 2,
+                })),
+              },
+            ],
+          })),
+        },
+      });
+    const envelope = JSON.parse(String(init?.body)) as {
+      max_tokens: number;
+      messages: Array<{ content: string }>;
+      response_format: { json_schema: { schema: unknown } };
+    };
+    const input = JSON.parse(envelope.messages[1]!.content) as {
+      videos: Array<{
+        videoId: string;
+        passages: Array<{ id: string; text: string; before: string; after: string }>;
+      }>;
+    };
+    expect(input.videos).toHaveLength(4);
+    expect(envelope.max_tokens).toBe(1400);
+    expect(
+      new TextEncoder().encode(
+        envelope.messages.map((m) => m.content).join("") +
+          JSON.stringify(envelope.response_format.json_schema.schema),
+      ).length,
+    ).toBeLessThanOrEqual(24000);
+    for (const v of input.videos) {
+      expect(v.videoId).toMatch(/^synthetic-original-video-/);
+      expect(v.passages.length).toBeLessThanOrEqual(6);
+      expect(v.passages.reduce((n, p) => n + p.text.length, 0)).toBeLessThanOrEqual(2000);
+      for (const p of v.passages) {
+        expect(p.id).toMatch(/^p\d{1,2}$/);
+        expect(p.before.length).toBeLessThanOrEqual(32);
+        expect(p.after.length).toBeLessThanOrEqual(32);
+      }
+    }
+    return Response.json({
+      choices: [
+        {
+          finish_reason: "stop",
+          message: {
+            content: JSON.stringify({
+              videos: input.videos.map((v) => ({
+                videoId: v.videoId,
+                relevance: "irrelevant",
+                genre: "non-fiction",
+                speakerConfidence: "high",
+                relevanceReason: "Synthetic exclusion",
+                claims: [],
+              })),
+            }),
+          },
+        },
+      ],
+      usage: { prompt_tokens: 100, completion_tokens: 50 },
+    });
+  });
+  await expect(
+    runPipeline(
+      { topic: "logement étudiant", platforms: ["tiktok"], language: "fr", dateRange: null },
+      secrets,
+      { fetcher, signal: AbortSignal.timeout(5000), stage: async () => {} },
+    ),
+  ).rejects.toThrow("insufficient_evidence");
+  expect(fetcher).toHaveBeenCalledTimes(2);
 });

@@ -45,7 +45,7 @@ try {
   const preflight = await request("/session");
   const processingVersion = preflight.response.headers.get("x-narrative-version");
   assert(
-    processingVersion === "jury-v5-gpt4o-mini-2026-11-07",
+    processingVersion === "jury-v6-gpt4o-mini-2026-11-07",
     "Corrected backend version is not deployed; no paid analysis attempted",
   );
   assert(

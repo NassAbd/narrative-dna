@@ -1,16 +1,19 @@
 import { z } from "zod";
-export const LIVE_VERSION = "jury-v5-gpt4o-mini-2026-11-07";
+export const LIVE_VERSION = "jury-v6-gpt4o-mini-2026-11-07";
 export const LIVE_LIMITS = {
   analyses: 10,
   concurrent: 1,
-  videos: 10,
+  videos: 4,
   topic: 200,
   responseBytes: 2_000_000,
-  transcriptChars: 40_000,
-  videoChars: 6000,
-  passages: 250,
-  extractionTokens: 3000,
-  groupingTokens: 1500,
+  transcriptChars: 8000,
+  videoChars: 2000,
+  passages: 24,
+  passagesPerVideo: 6,
+  claimsPerVideo: 2,
+  modelInputBytes: 24_000,
+  extractionTokens: 1400,
+  groupingTokens: 700,
   providerCalls: 3,
   estimatedOrianeCredits: 50,
   estimatedOrianeBudget: 500,
