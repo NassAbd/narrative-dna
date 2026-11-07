@@ -1,28 +1,51 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { ImageOff } from "lucide-react";
 import { platformLabel, type EvidenceClip } from "@/lib/narrative";
-import { formatDate, formatRange } from "@/lib/narrative/format";
+import { formatDate, formatRange, formatTime } from "@/lib/narrative/format";
+
+function FrameImage({ clip }: { clip: EvidenceClip }) {
+  const [failed, setFailed] = useState(false);
+  return clip.frameUrl && !failed ? (
+    <img
+      src={clip.frameUrl}
+      alt={`Oriane frame from video ${clip.videoId} at ${formatTime(clip.frameTimestampSec) ?? "unavailable time"}`}
+      className="size-full object-contain"
+      loading="lazy"
+      decoding="async"
+      referrerPolicy="no-referrer"
+      onError={() => setFailed(true)}
+    />
+  ) : (
+    <div className="flex size-full flex-col items-center justify-center gap-1 text-ink-muted">
+      <ImageOff className="size-5" aria-hidden />
+      <span className="font-mono text-[10px] uppercase tracking-widest">Frame unavailable</span>
+    </div>
+  );
+}
 
 export function EvidenceFrame({ clip, large }: { clip: EvidenceClip; large?: boolean }) {
+  const outside =
+    clip.frameTimestampSec !== undefined &&
+    clip.startSec !== null &&
+    clip.endSec !== null &&
+    (clip.frameTimestampSec < clip.startSec || clip.frameTimestampSec > clip.endSec);
   return (
-    <div
-      className={`relative overflow-hidden rounded-sm frame-bg ${large ? "aspect-video" : "aspect-[4/3]"}`}
-    >
-      {clip.frameUrl ? (
-        <img
-          src={clip.frameUrl}
-          alt={`Frame from video ${clip.videoId}`}
-          className="size-full object-cover"
-        />
-      ) : (
-        <div className="flex size-full flex-col items-center justify-center gap-1 text-ink-muted">
-          <ImageOff className="size-5" aria-hidden />
-          <span className="font-mono text-[10px] uppercase tracking-widest">Frame unavailable</span>
-        </div>
+    <div>
+      <div
+        className={`relative overflow-hidden rounded-sm frame-bg ${large ? "aspect-video" : "aspect-[4/3]"}`}
+      >
+        <FrameImage key={clip.frameUrl ?? "unavailable"} clip={clip} />
+        <span className="absolute left-2 top-2 rounded-sm bg-ink/80 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-foreground">
+          {clip.platform ? platformLabel(clip.platform) : "Platform unavailable"}
+        </span>
+      </div>
+      {clip.frameUrl && (
+        <p className="mt-1 font-mono text-[10px] text-muted-foreground">
+          {outside ? "Nearest available source frame" : "Oriane source frame"} ·{" "}
+          {formatTime(clip.frameTimestampSec)}
+          {outside ? " · outside quoted interval" : ""}
+        </p>
       )}
-      <span className="absolute left-2 top-2 rounded-sm bg-ink/80 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-foreground">
-        {clip.platform ? platformLabel(clip.platform) : "Platform unavailable"}
-      </span>
     </div>
   );
 }

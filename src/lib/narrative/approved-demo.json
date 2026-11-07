@@ -15,7 +15,14 @@
       "platform": "tiktok",
       "approval": {
         "origin": "explicit_human_decision"
-      }
+      },
+      "creator": {
+        "handle": "jeunesinsoumis",
+        "displayName": "Les Jeunes Insoumis·es"
+      },
+      "publishedAt": "2026-09-15T18:04:05.000Z",
+      "frameUrl": "https://social-catalog-static.oriane.xyz/oriane-frames/tiktok/7685824397072026912/11_70.43.webp",
+      "frameTimestampSec": 70.43
     },
     {
       "id": "S02",
@@ -30,7 +37,14 @@
       "platform": "tiktok",
       "approval": {
         "origin": "explicit_human_decision"
-      }
+      },
+      "creator": {
+        "handle": "jeunesinsoumis",
+        "displayName": "Les Jeunes Insoumis·es"
+      },
+      "publishedAt": "2026-09-15T18:04:05.000Z",
+      "frameUrl": "https://social-catalog-static.oriane.xyz/oriane-frames/tiktok/7685824397072026912/12_77.63.webp",
+      "frameTimestampSec": 77.63
     },
     {
       "id": "S03",
@@ -45,7 +59,14 @@
       "platform": "tiktok",
       "approval": {
         "origin": "explicit_human_decision"
-      }
+      },
+      "creator": {
+        "handle": "grandebavardeuse",
+        "displayName": "Bavardage"
+      },
+      "publishedAt": "2026-09-11T16:25:07.000Z",
+      "frameUrl": "https://social-catalog-static.oriane.xyz/oriane-frames/tiktok/7684314552493722913/47_62.40.webp",
+      "frameTimestampSec": 62.4
     },
     {
       "id": "S04",
@@ -60,7 +81,14 @@
       "platform": "tiktok",
       "approval": {
         "origin": "explicit_human_decision"
-      }
+      },
+      "creator": {
+        "handle": "marylouleloup",
+        "displayName": "marylou leloup"
+      },
+      "publishedAt": "2026-08-27T16:41:13.000Z",
+      "frameUrl": "https://social-catalog-static.oriane.xyz/oriane-frames/tiktok/7678752430602931488/1_24.23.webp",
+      "frameTimestampSec": 24.23
     },
     {
       "id": "S05",
@@ -75,7 +103,14 @@
       "platform": "tiktok",
       "approval": {
         "origin": "explicit_human_decision"
-      }
+      },
+      "creator": {
+        "handle": "marylouleloup",
+        "displayName": "marylou leloup"
+      },
+      "publishedAt": "2026-08-27T16:41:13.000Z",
+      "frameUrl": "https://social-catalog-static.oriane.xyz/oriane-frames/tiktok/7678752430602931488/1_24.23.webp",
+      "frameTimestampSec": 24.23
     },
     {
       "id": "S07",
@@ -90,7 +125,14 @@
       "platform": "tiktok",
       "approval": {
         "origin": "explicit_human_decision"
-      }
+      },
+      "creator": {
+        "handle": "france3paca",
+        "displayName": "France3Paca"
+      },
+      "publishedAt": "2026-09-18T16:02:34.000Z",
+      "frameUrl": "https://social-catalog-static.oriane.xyz/oriane-frames/tiktok/7686906434700840224/34_119.08.webp",
+      "frameTimestampSec": 119.08
     },
     {
       "id": "S09",
@@ -105,7 +147,14 @@
       "platform": "tiktok",
       "approval": {
         "origin": "explicit_human_decision"
-      }
+      },
+      "creator": {
+        "handle": "france3paca",
+        "displayName": "France3Paca"
+      },
+      "publishedAt": "2026-09-18T16:02:34.000Z",
+      "frameUrl": "https://social-catalog-static.oriane.xyz/oriane-frames/tiktok/7686906434700840224/14_42.67.webp",
+      "frameTimestampSec": 42.67
     },
     {
       "id": "S10",
@@ -120,7 +169,14 @@
       "platform": "tiktok",
       "approval": {
         "origin": "explicit_human_decision"
-      }
+      },
+      "creator": {
+        "handle": "jeunesinsoumis",
+        "displayName": "Les Jeunes Insoumis·es"
+      },
+      "publishedAt": "2026-09-15T18:04:05.000Z",
+      "frameUrl": "https://social-catalog-static.oriane.xyz/oriane-frames/tiktok/7685824397072026912/11_70.43.webp",
+      "frameTimestampSec": 70.43
     },
     {
       "id": "S11",
@@ -135,7 +191,14 @@
       "platform": "tiktok",
       "approval": {
         "origin": "explicit_human_decision"
-      }
+      },
+      "creator": {
+        "handle": "romain_lck",
+        "displayName": "Romain"
+      },
+      "publishedAt": "2026-09-22T16:05:46.000Z",
+      "frameUrl": "https://social-catalog-static.oriane.xyz/oriane-frames/tiktok/7688391500924751137/4_8.50.webp",
+      "frameTimestampSec": 8.5
     }
   ],
   "narratives": [

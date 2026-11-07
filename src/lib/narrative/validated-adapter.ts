@@ -14,9 +14,35 @@ const claimSchema = z
     startSeconds: time,
     endSeconds: time,
     platform: z.enum(["tiktok", "instagram", "youtube"]).nullable().optional(),
+    creator: z
+      .object({ handle: z.string().min(1), displayName: z.string().min(1).optional() })
+      .nullable()
+      .optional(),
+    publishedAt: z.string().datetime({ offset: true }).nullable().optional(),
+    frameUrl: z
+      .string()
+      .url()
+      .refine((value) => {
+        const url = new URL(value);
+        return (
+          url.protocol === "https:" &&
+          url.hostname === "social-catalog-static.oriane.xyz" &&
+          !url.search &&
+          !url.username &&
+          !url.password &&
+          !url.hash
+        );
+      }, "Frame must be an unsigned public Oriane image URL")
+      .optional(),
+    frameTimestampSec: z.number().finite().nonnegative().optional(),
     approval: z.object({ origin: z.literal("explicit_human_decision") }),
   })
   .superRefine((claim, ctx) => {
+    if ((claim.frameUrl === undefined) !== (claim.frameTimestampSec === undefined))
+      ctx.addIssue({
+        code: "custom",
+        message: "Frame URL and source timestamp must be supplied together",
+      });
     if (!claim.transcriptContext.includes(claim.quote))
       ctx.addIssue({ code: "custom", message: "Quotation is absent from source context" });
     if (
@@ -88,8 +114,14 @@ export function adaptValidatedPayload(input: unknown): AnalysisResult {
         startSec: c.startSeconds,
         endSec: c.endSeconds,
         sourceType: "transcript",
-        creator: null,
-        publishedAt: null,
+        creator: c.creator
+          ? {
+              handle: c.creator.handle,
+              ...(c.creator.displayName ? { displayName: c.creator.displayName } : {}),
+            }
+          : null,
+        publishedAt: c.publishedAt ?? null,
+        ...(c.frameUrl ? { frameUrl: c.frameUrl, frameTimestampSec: c.frameTimestampSec! } : {}),
         platform: c.platform ?? null,
         formulation: c.formulation,
         discourseType: c.type,

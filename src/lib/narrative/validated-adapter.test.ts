@@ -27,12 +27,19 @@ describe("approved precomputed adapter", () => {
         startSec: c.startSeconds,
         endSec: c.endSeconds,
         discourseType: c.type,
-        creator: null,
-        publishedAt: null,
+        creator: c.creator,
+        publishedAt: c.publishedAt,
+        frameUrl: c.frameUrl,
+        frameTimestampSec: c.frameTimestampSec,
       });
-    expect(clips.every((c) => !c.sourceUrl && !c.frameUrl && !c.videoId.startsWith("mock-"))).toBe(
-      true,
-    );
+    expect(
+      clips.every(
+        (c) =>
+          !c.sourceUrl &&
+          c.frameUrl?.startsWith("https://social-catalog-static.oriane.xyz/") &&
+          !c.videoId.startsWith("mock-"),
+      ),
+    ).toBe(true);
   });
   it("rejects missing approval, invalid quotes/times and invented membership", () => {
     for (const change of [
@@ -60,4 +67,37 @@ describe("approved precomputed adapter", () => {
       expect(() => adaptValidatedPayload(copy)).toThrow();
     }
   });
+});
+
+it("retains graceful fallbacks for a sanitized payload without optional enrichment", () => {
+  const stripped = {
+    ...data,
+    claims: data.claims.map(
+      ({ creator, publishedAt, frameUrl, frameTimestampSec, ...claim }) => claim,
+    ),
+  };
+  const result = adaptValidatedPayload(stripped);
+  for (const clip of [
+    ...result.narratives.flatMap((n) => n.evidence),
+    ...result.individualObservations!,
+  ]) {
+    expect(clip.creator).toBeNull();
+    expect(clip.publishedAt).toBeNull();
+    expect(clip.frameUrl).toBeUndefined();
+  }
+});
+it("rejects credential-bearing, signed, private or malformed frame metadata", () => {
+  for (const frameUrl of [
+    "https://social-catalog-static.oriane.xyz/frame.webp?token=secret",
+    "https://user:secret@social-catalog-static.oriane.xyz/frame.webp",
+    "http://social-catalog-static.oriane.xyz/frame.webp",
+    "https://private.example/frame.webp",
+  ]) {
+    const copy = structuredClone(data);
+    copy.claims[0]!.frameUrl = frameUrl;
+    expect(() => adaptValidatedPayload(copy)).toThrow();
+  }
+  const copy = structuredClone(data);
+  copy.claims[0]!.frameTimestampSec = -1;
+  expect(() => adaptValidatedPayload(copy)).toThrow();
 });

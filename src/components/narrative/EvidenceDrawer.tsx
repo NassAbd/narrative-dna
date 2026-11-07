@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { platformLabel, type EvidenceClip, type Narrative } from "@/lib/narrative";
-import { formatDate, formatRange, formatTime } from "@/lib/narrative/format";
+import { formatDate, formatRange } from "@/lib/narrative/format";
 import { EvidenceFrame } from "./EvidenceCard";
 
 interface Props {
@@ -91,7 +91,9 @@ export function EvidenceDrawer({ clip, narrative, onClose }: Props) {
               <div>
                 <EvidenceFrame clip={clip} large />
                 <p className="mt-1 font-mono text-[10px] text-muted-foreground">
-                  Frame at {formatTime(clip.frameTimestampSec) ?? "unknown time"}
+                  {clip.frameUrl
+                    ? `Exact frame time: ${clip.frameTimestampSec} s`
+                    : "Frame timestamp not provided"}
                 </p>
               </div>
               <dl>

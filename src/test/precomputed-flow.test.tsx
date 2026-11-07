@@ -16,6 +16,7 @@ it("loads the real groups and separate observations and opens exact evidence wit
   await screen.findByRole("heading", { name: data.narratives[0]!.title });
   expect(screen.getByRole("heading", { name: data.narratives[1]!.title })).toBeInTheDocument();
   expect(screen.getByText("2 narratives")).toBeInTheDocument();
+  expect(screen.getAllByText(/outside quoted interval/)).toHaveLength(3);
   expect(screen.getAllByText(/of 5 represented videos support this group/)).toHaveLength(2);
   expect(
     screen.getByRole("heading", { name: "Individual observations · student housing" }),
@@ -24,7 +25,7 @@ it("loads the real groups and separate observations and opens exact evidence wit
   const claim = data.claims.find((c) => c.id === "S03")!;
   fireEvent.click(
     screen.getByRole("button", {
-      name: `Evidence from Creator unavailable on TikTok: ${claim.quote}`,
+      name: `Evidence from ${claim.creator.handle} on TikTok: ${claim.quote}`,
     }),
   );
   const drawer = await screen.findByRole("dialog");
@@ -34,7 +35,11 @@ it("loads the real groups and separate observations and opens exact evidence wit
     within(drawer).getByText(`${claim.startSeconds} – ${claim.endSeconds} s`),
   ).toBeInTheDocument();
   expect(within(drawer).getByText("Original link not provided.")).toBeInTheDocument();
-  expect(within(drawer).getAllByText("Not available")).toHaveLength(2);
+  expect(within(drawer).queryByText("Not available")).not.toBeInTheDocument();
+  expect(
+    within(drawer).getByText(`${claim.creator.displayName} (${claim.creator.handle})`),
+  ).toBeInTheDocument();
+  expect(within(drawer).getByRole("img")).toHaveAttribute("src", claim.frameUrl);
   expect(within(drawer).queryByRole("link")).not.toBeInTheDocument();
   expect(fetch).not.toHaveBeenCalled();
 });
