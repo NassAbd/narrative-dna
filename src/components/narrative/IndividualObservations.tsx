@@ -11,10 +11,13 @@ export function IndividualObservations({
 }) {
   return (
     <section
-      aria-labelledby="individual-observations"
+      aria-labelledby={live ? "live-individual-observations" : "individual-observations"}
       className="mt-14 border-t border-foreground/80 pt-8"
     >
-      <h2 id="individual-observations" className="font-serif text-3xl">
+      <h2
+        id={live ? "live-individual-observations" : "individual-observations"}
+        className="font-serif text-3xl"
+      >
         {live ? "Individual observations" : "Individual observations · student housing"}
       </h2>
       <p className="mt-3 max-w-3xl text-muted-foreground">

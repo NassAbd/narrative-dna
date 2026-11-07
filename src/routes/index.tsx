@@ -207,9 +207,11 @@ export function Index() {
       </main>
 
       <footer className="mx-auto max-w-6xl border-t border-border px-6 py-6 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-        {precomputed
-          ? "Real Oriane evidence · precomputed analysis · missing metadata is not reconstructed"
-          : "Mock mode · fictional creators and quotations · no source links are invented"}
+        {mode === "live"
+          ? "Jury Live · AI-generated · source-verified · not editorially reviewed"
+          : precomputed
+            ? "Real Oriane evidence · precomputed analysis · missing metadata is not reconstructed"
+            : "Mock mode · fictional creators and quotations · no source links are invented"}
       </footer>
 
       <EvidenceDrawer

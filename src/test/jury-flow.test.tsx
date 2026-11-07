@@ -103,7 +103,7 @@ it("renders cached live evidence without calling it human-approved or issuing pr
     target: { value: "private-password" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Unlock Jury Live" }));
-  const topic = await screen.findByLabelText("Topic");
+  const topic = await screen.findByRole("textbox", { name: "Topic" });
   fireEvent.change(topic, { target: { value: "Sujet de test" } });
   fireEvent.click(screen.getByRole("button", { name: "Analyze narratives" }));
   await screen.findByText("Cached live");

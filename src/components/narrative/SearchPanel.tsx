@@ -54,7 +54,7 @@ export function SearchPanel({
     >
       <div className="space-y-2">
         <label
-          htmlFor="topic"
+          htmlFor={live ? "live-topic" : "topic"}
           className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-muted"
         >
           Topic
@@ -62,7 +62,7 @@ export function SearchPanel({
         <div className="flex items-center gap-3 border-b border-ink-border pb-2 focus-within:border-primary">
           <Search className="size-5 text-ink-muted" aria-hidden />
           <input
-            id="topic"
+            id={live ? "live-topic" : "topic"}
             maxLength={live ? 200 : undefined}
             minLength={live ? 3 : undefined}
             readOnly={precomputed}
