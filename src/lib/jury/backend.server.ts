@@ -16,7 +16,9 @@ export async function handleWithDependencies(request: Request, secrets: JuryBind
   const rpc = dependencies.rpc ?? storage(secrets), path = new URL(request.url).pathname;
   let available = false;
   try {
-    if (isEnabled(secrets) && secrets["SUPABASE_URL"] && secrets["SUPABASE_SERVICE_ROLE_KEY"]) available = Boolean((await rpc("health"))["healthy"]);
+    if (isEnabled(secrets) && secrets["SUPABASE_URL"] && secrets["SUPABASE_SERVICE_ROLE_KEY"]) {
+      try { available = Boolean((await rpc("health"))["healthy"]); } catch { available = false; }
+    }
     if (path === "/api/jury/config" && request.method === "GET") return reply({ available });
     if (!available) {
       if (path === "/api/jury/session" && request.method === "GET") return reply({ available: false, authenticated: false });
@@ -71,24 +73,26 @@ export async function handleWithDependencies(request: Request, secrets: JuryBind
     if (operation === "cancel") return reply(publicJob(await rpc("cancel", jobAuth)));
     if (operation !== "run") throw new JuryError("not_found", 404);
     // One atomic claim only; never retry a provider on refresh, disconnect or repeated run.
-    const claim = await rpc("claim", jobAuth);
+    // Budget starts before claim. Health <=4s + claim/pipeline <=46s + finish <=4s.
+    const signal = AbortSignal.timeout(46_000);
+    const claim = await rpc("claim", jobAuth, signal);
     const runAuth = { ...jobAuth, run_token: claim["runToken"] };
-    // Leave 5 seconds for durable completion; admission lock lives 120 seconds.
-    const signal = AbortSignal.timeout(49_000);
+    let completion: Record<string, unknown>;
     try {
       const query = SubmitSchema.shape.query.parse(claim["query"]);
       const result = await runPipeline(query, secrets, { ...(dependencies.fetcher ? { fetcher: dependencies.fetcher } : {}), signal, stage: async stage => {
         if (!isEnabled(secrets)) throw new JuryError("unavailable", 503);
-        signal.throwIfAborted(); await rpc("stage", { ...runAuth, stage });
+        signal.throwIfAborted(); await rpc("stage", { ...runAuth, stage }, signal);
       } });
-      return reply(publicJob(await rpc("finish", { ...runAuth, outcome: "completed", result })));
+      completion = { ...runAuth, outcome: "completed", result };
     } catch (error) {
       const code = error instanceof JuryError ? error.code : signal.aborted ? "execution_timeout" : "analysis_failed";
       // An abort must settle the awaited fetch first. Only then can finish release the lease.
       // Storage failure leaves the lease and quota untouched; a later RPC expires it.
-      const failed = await rpc("finish", { ...runAuth, outcome: code === "cancelled" ? "cancelled" : "failed", error_code: code });
-      return reply(publicJob(failed));
+      completion = { ...runAuth, outcome: code === "cancelled" ? "cancelled" : "failed", error_code: code };
     }
+    // Exactly one completion attempt; a failed persistence leaves the conservative lease intact.
+    return reply(publicJob(await rpc("finish", completion)));
   } catch (error) {
     if (error instanceof z.ZodError) return reply({ errorCode: "invalid_request" }, 400);
     if (error instanceof JuryError) return reply({ errorCode: error.code }, error.status);

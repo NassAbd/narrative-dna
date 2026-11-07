@@ -8,16 +8,16 @@ export function bindings(env: unknown): JuryBindings {
   const names = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "JURY_ACCESS_PASSWORD", "JURY_LIVE_ENABLED", "ORIANE_API_KEY", "OPENAI_API_KEY"];
   return Object.fromEntries(names.map(name => [name, typeof supplied[name] === "string" ? supplied[name] : process.env[name]]));
 }
-export type Rpc = (action: string, args?: Record<string, unknown>) => Promise<Record<string, any>>;
+export type Rpc = (action: string, args?: Record<string, unknown>, signal?: AbortSignal) => Promise<Record<string, any>>;
 export function storage(secrets: JuryBindings): Rpc {
-  return async (action, args = {}) => {
+  return async (action, args = {}, signal) => {
     const url = secrets["SUPABASE_URL"], key = secrets["SUPABASE_SERVICE_ROLE_KEY"];
     if (!url || !key) throw new JuryError("unavailable", 503);
     const headers = new Headers({ "content-type": "application/json", apikey: key });
     if (!key.startsWith("sb_")) headers.set("authorization", `Bearer ${key}`);
     try {
       const response = await fetch(`${url.replace(/\/$/, "")}/rest/v1/rpc/jury_backend`, {
-        method: "POST", headers, body: JSON.stringify({ p_action: action, p_args: args }), signal: AbortSignal.timeout(4000),
+        method: "POST", headers, body: JSON.stringify({ p_action: action, p_args: args }), signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(4000)]) : AbortSignal.timeout(4000),
       });
       if (!response.ok) throw new JuryError("storage_unavailable", 503);
       const data = await response.json() as Record<string, any>;

@@ -104,3 +104,25 @@ it("runs mocked real extraction stages with locally bound evidence and no human 
 it("production entry remains unavailable with no runtime bindings", async () => {
   expect(await (await handleJuryRequest(request("config"), { JURY_LIVE_ENABLED: "false" })).json()).toEqual({ available: false });
 });
+it("awaits a reserved authenticated runner, reads its persisted result, and does not retry failures", async () => {
+  const token = randomToken(), csrf = await hmac(secrets.SUPABASE_SERVICE_ROLE_KEY, `jury-csrf:${token}`), id = crypto.randomUUID();
+  const headers = { cookie: `__Host-nd-jury=${token}`, "x-csrf-token": csrf };
+  let saved: Record<string, unknown> = { id, status: "queued", stage: "search", completedStages: [], remaining: 9, cached: false };
+  const query = { topic: "Logement étudiant", platforms: ["tiktok"], language: "fr", dateRange: null };
+  const actions: string[] = [];
+  const rpc = async (action: string, args: Record<string, unknown> = {}) => {
+    actions.push(action);
+    if (action === "health") return { healthy: true };
+    if (action === "claim") { saved["status"] = "running"; return { ...saved, query, runToken: crypto.randomUUID() }; }
+    if (action === "stage") { saved["stage"] = args["stage"]; return saved; }
+    if (action === "finish") { saved = { ...saved, status: args["outcome"], result: args["result"], errorCode: args["error_code"] }; return saved; }
+    return saved;
+  };
+  const fetcher = vi.fn<typeof fetch>(async () => Response.json({ data: { results: [] } }));
+  const response = await handleWithDependencies(request(`jobs/${id}/run`, {}, headers), secrets, { rpc, fetcher });
+  expect((await response.json()).status).toBe("failed");
+  expect(fetcher).toHaveBeenCalledTimes(1);
+  expect(actions.filter(a => a === "finish")).toHaveLength(1);
+  const readBack = await handleWithDependencies(request(`jobs/${id}`, undefined, headers), secrets, { rpc });
+  expect((await readBack.json()).errorCode).toBe("no_results");
+});

@@ -1,0 +1,33 @@
+DO $$ DECLARE a jsonb; b jsonb; j jsonb; k uuid:=gen_random_uuid(); job uuid; run uuid; t text:=encode(gen_random_bytes(32),'hex'); v text:=encode(gen_random_bytes(32),'hex'); x text:=encode(gen_random_bytes(32),'hex'); i integer; BEGIN BEGIN
+PERFORM public.jury_backend('health');
+UPDATE public.jury_control SET used=0,oriane_reserved=0,openai_reserved=0,active_job=NULL,lease_until=NULL WHERE id=true;
+PERFORM public.jury_backend('login',jsonb_build_object('token_hash',t,'credential_version',v,'csrf_hash',x));
+a:=jsonb_build_object('token_hash',t,'credential_version',v,'csrf_hash',x);
+IF public.jury_backend('session',a||jsonb_build_object('credential_version','different'))->>'error' IS DISTINCT FROM 'unauthenticated' THEN RAISE EXCEPTION 'rotation check'; END IF;
+IF public.jury_backend('reserve',a||jsonb_build_object('csrf_hash','wrong'))->>'error' IS DISTINCT FROM 'csrf_rejected' THEN RAISE EXCEPTION 'csrf check'; END IF;
+b:=a||jsonb_build_object('idempotency_key',k,'cache_key','test-'||k,'query',jsonb_build_object('topic','test'));
+j:=public.jury_backend('reserve',b); job:=(j->>'id')::uuid;
+IF j->>'remaining' IS DISTINCT FROM '9' THEN RAISE EXCEPTION 'reservation check'; END IF;
+IF public.jury_backend('reserve',b)->>'id' IS DISTINCT FROM job::text THEN RAISE EXCEPTION 'idempotence check'; END IF;
+IF public.jury_backend('reserve',a||jsonb_build_object('idempotency_key',gen_random_uuid(),'cache_key','busy-test'))->>'error' IS DISTINCT FROM 'busy' THEN RAISE EXCEPTION 'concurrency check'; END IF;
+j:=public.jury_backend('claim',a||jsonb_build_object('job_id',job)); run:=(j->>'runToken')::uuid;
+IF public.jury_backend('claim',a||jsonb_build_object('job_id',job))->>'error' IS DISTINCT FROM 'not_runnable' THEN RAISE EXCEPTION 'claim check'; END IF;
+PERFORM public.jury_backend('cancel',a||jsonb_build_object('job_id',job));
+IF (SELECT active_job IS NULL FROM public.jury_control WHERE id=true) THEN RAISE EXCEPTION 'cancellation lock check'; END IF;
+PERFORM public.jury_backend('finish',a||jsonb_build_object('job_id',job,'run_token',run,'outcome','failed','error_code','test_failure'));
+IF (SELECT used FROM public.jury_control WHERE id=true)<>1 THEN RAISE EXCEPTION 'no refund check'; END IF;
+IF public.jury_backend('reserve',b)->>'status' IS DISTINCT FROM 'cancelled' THEN RAISE EXCEPTION 'failed duplicate check'; END IF;
+UPDATE public.jury_jobs SET status='completed',result='{"mode":"live"}' WHERE id=job;
+IF public.jury_backend('reserve',b||jsonb_build_object('idempotency_key',gen_random_uuid()))->>'cached' IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'cache check'; END IF;
+IF (SELECT used FROM public.jury_control WHERE id=true)<>1 THEN RAISE EXCEPTION 'free cache check'; END IF;
+UPDATE public.jury_control SET used=10,oriane_reserved=500,openai_reserved=1 WHERE id=true;
+IF public.jury_backend('reserve',a||jsonb_build_object('idempotency_key',gen_random_uuid(),'cache_key','quota-test'))->>'error' IS DISTINCT FROM 'quota_exhausted' THEN RAISE EXCEPTION 'quota check'; END IF;
+UPDATE public.jury_sessions SET expires_at=clock_timestamp()-interval '1 second' WHERE token_hash=t;
+IF public.jury_backend('session',a)->>'error' IS DISTINCT FROM 'unauthenticated' THEN RAISE EXCEPTION 'expiry check'; END IF;
+IF has_function_privilege('anon','public.jury_backend(text,jsonb)','EXECUTE') OR has_function_privilege('authenticated','public.jury_backend(text,jsonb)','EXECUTE') THEN RAISE EXCEPTION 'privilege check'; END IF;
+FOR i IN 1..21 LOOP j:=public.jury_backend('login_limit'); END LOOP;
+IF j->>'error' IS DISTINCT FROM 'login_limited' THEN RAISE EXCEPTION 'persistent limiter check'; END IF;
+-- Deliberate subtransaction rollback: no test sessions, jobs, quota or limiter writes survive.
+RAISE EXCEPTION USING ERRCODE='J0001', MESSAGE='rollback successful checks';
+EXCEPTION WHEN SQLSTATE 'J0001' THEN NULL; END;
+END $$;

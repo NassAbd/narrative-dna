@@ -1,5 +1,5 @@
 # Jury backend
-- [ ] Apply private transactional schema and RPCs.
-- [ ] Implement server-only auth, CSRF, quotas, runner and source-verified results.
-- [ ] Run backend and Explore regression tests; document wiring and runtime limits.
-- [ ] Leave live disabled until server credentials and foreground execution are verified.
+- [x] Apply private transactional schema and RPCs.
+- [x] Implement server-only auth, CSRF, quotas, runner and source-verified results.
+- [x] Run backend and Explore regression tests; document wiring and runtime limits.
+- [ ] Live activation waits on owner wiring, private provider secrets, and verification of published credential injection and foreground duration. Remains disabled; no paid tests or publishing.

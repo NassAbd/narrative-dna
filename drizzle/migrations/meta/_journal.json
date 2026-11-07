@@ -15,6 +15,27 @@
       "when": 1794054638254,
       "tag": "0001_jury_reservation_and_lease_corrections",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794054884838,
+      "tag": "0002_jury_transactional_regression_checks",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794054963425,
+      "tag": "0003_jury_sliding_login_window",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794055032028,
+      "tag": "0004_jury_lease_and_sliding_limiter_checks",
+      "breakpoints": true
     }
   ]
 }
