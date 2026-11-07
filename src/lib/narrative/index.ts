@@ -15,3 +15,5 @@ export const narrativeService: NarrativeService = mockMode
 export { PRECOMPUTED_QUERY } from "./precomputed-service";
 export * from "./types";
 export { PLATFORMS, DEFAULT_PLATFORMS, platformLabel } from "./platforms";
+
+export { createJuryClient } from "../jury/client";

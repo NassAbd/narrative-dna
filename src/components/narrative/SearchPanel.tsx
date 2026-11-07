@@ -17,6 +17,7 @@ interface Props {
   initialPlatforms: Platform[];
   busy: boolean;
   precomputed?: boolean;
+  live?: boolean;
   onSubmit: (q: SearchQuery) => void;
 }
 
@@ -26,6 +27,7 @@ export function SearchPanel({
   busy,
   onSubmit,
   precomputed = false,
+  live = false,
 }: Props) {
   const [topic, setTopic] = useState(initialTopic);
   const [platforms, setPlatforms] = useState<Platform[]>(initialPlatforms);
@@ -37,7 +39,11 @@ export function SearchPanel({
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (!topic.trim() || platforms.length === 0) return;
-    onSubmit({ topic: topic.trim(), platforms, dateRange: precomputed ? null : rangeFor(days) });
+    onSubmit({
+      topic: topic.trim(),
+      platforms,
+      dateRange: precomputed || live ? null : rangeFor(days),
+    });
   };
 
   return (
@@ -57,6 +63,8 @@ export function SearchPanel({
           <Search className="size-5 text-ink-muted" aria-hidden />
           <input
             id="topic"
+            maxLength={live ? 200 : undefined}
+            minLength={live ? 3 : undefined}
             readOnly={precomputed}
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
@@ -73,28 +81,30 @@ export function SearchPanel({
             >
               Platforms
             </span>
-            {PLATFORMS.filter((p) => !precomputed || initialPlatforms.includes(p.id)).map((p) => {
-              const on = platforms.includes(p.id);
-              return (
-                <button
-                  key={p.id}
-                  type="button"
-                  aria-pressed={on}
-                  disabled={precomputed}
-                  onClick={() => toggle(p.id)}
-                  className={cn(
-                    "rounded-full border px-3 py-1 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-                    on
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-ink-border text-ink-muted hover:text-ink-foreground",
-                  )}
-                >
-                  {p.label}
-                </button>
-              );
-            })}
+            {PLATFORMS.filter((p) => !(precomputed || live) || initialPlatforms.includes(p.id)).map(
+              (p) => {
+                const on = platforms.includes(p.id);
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    aria-pressed={on}
+                    disabled={precomputed || live}
+                    onClick={() => toggle(p.id)}
+                    className={cn(
+                      "rounded-full border px-3 py-1 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                      on
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-ink-border text-ink-muted hover:text-ink-foreground",
+                    )}
+                  >
+                    {p.label}
+                  </button>
+                );
+              },
+            )}
           </fieldset>
-          {!precomputed && (
+          {!precomputed && !live && (
             <fieldset className="flex items-center gap-2">
               <legend className="sr-only">Date range</legend>
               <span

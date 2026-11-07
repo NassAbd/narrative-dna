@@ -47,7 +47,11 @@ export function EvidenceDrawer({ clip, narrative, onClose }: Props) {
             <SheetHeader className="text-left">
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-primary">
                 Evidence ·{" "}
-                {clip.provenance === "precomputed" ? "real Oriane data · precomputed" : "mock data"}
+                {clip.provenance === "precomputed"
+                  ? "real Oriane data · precomputed"
+                  : clip.provenance === "live"
+                    ? "real Oriane data · live AI-generated"
+                    : "mock data"}
               </p>
               <SheetTitle className="font-serif text-xl font-normal leading-snug">
                 {narrative?.claim ?? "Individual observation"}
@@ -65,7 +69,11 @@ export function EvidenceDrawer({ clip, narrative, onClose }: Props) {
               {clip.discourseType && (
                 <p className="font-mono text-[11px] uppercase tracking-wider text-primary">
                   {clip.discourseType} ·{" "}
-                  {clip.provenance === "precomputed" ? "Human-approved claim" : "Fictional example"}
+                  {clip.provenance === "precomputed"
+                    ? "Human-approved claim"
+                    : clip.provenance === "live"
+                      ? "AI-GENERATED · SOURCE-VERIFIED · NOT EDITORIALLY REVIEWED"
+                      : "Fictional example"}
                 </p>
               )}
               <blockquote

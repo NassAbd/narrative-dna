@@ -11,6 +11,7 @@ import {
   type SearchQuery,
   type StepId,
 } from "@/lib/narrative";
+import { JuryLivePanel } from "@/components/narrative/JuryLivePanel";
 import { SearchPanel } from "@/components/narrative/SearchPanel";
 import { ProgressSteps } from "@/components/narrative/ProgressSteps";
 import { NarrativeSection } from "@/components/narrative/NarrativeSection";
@@ -46,6 +47,8 @@ type Phase =
   | { kind: "error"; message: string };
 
 export function Index() {
+  const [mode, setMode] = useState<"explore" | "live">("explore");
+  const [liveMounted, setLiveMounted] = useState(false);
   const precomputed = narrativeService.mode === "precomputed";
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
   const [events, setEvents] = useState<Partial<Record<StepId, ProgressEvent>>>({});
@@ -88,78 +91,119 @@ export function Index() {
               </span>
             </div>
             <span className="rounded-sm border border-primary px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.18em] text-accent">
-              {precomputed ? "Real data · precomputed" : "Mock data"}
+              {mode === "live"
+                ? "Jury Live · protected"
+                : precomputed
+                  ? "Real data · precomputed"
+                  : "Mock data"}
             </span>
           </div>
-          <SearchPanel
-            initialTopic="Logement en France"
-            initialPlatforms={precomputed ? PRECOMPUTED_QUERY.platforms : DEFAULT_PLATFORMS}
-            precomputed={precomputed}
-            busy={phase.kind === "running"}
-            onSubmit={run}
-          />
+          <nav aria-label="Analysis mode" className="mb-8 flex gap-3">
+            <button
+              type="button"
+              aria-pressed={mode === "explore"}
+              onClick={() => {
+                setMode("explore");
+                setOpen(null);
+              }}
+              className="rounded-full border border-ink-border px-5 py-2 aria-pressed:bg-primary aria-pressed:text-primary-foreground"
+            >
+              Explore
+            </button>
+            <button
+              type="button"
+              aria-pressed={mode === "live"}
+              onClick={() => {
+                setLiveMounted(true);
+                setMode("live");
+                setOpen(null);
+              }}
+              className="rounded-full border border-ink-border px-5 py-2 aria-pressed:bg-primary aria-pressed:text-primary-foreground"
+            >
+              Jury Live
+            </button>
+          </nav>
+          <div hidden={mode !== "explore"}>
+            <SearchPanel
+              initialTopic="Logement en France"
+              initialPlatforms={precomputed ? PRECOMPUTED_QUERY.platforms : DEFAULT_PLATFORMS}
+              precomputed={precomputed}
+              busy={phase.kind === "running"}
+              onSubmit={run}
+            />
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-10">
-        {phase.kind === "idle" && (
-          <div className="max-w-2xl py-12">
-            <h1 className="font-serif text-5xl leading-tight">
-              Which arguments are people making — and where is the proof?
-            </h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              {precomputed
-                ? "Explore two narrative groups and three individual student-housing observations from a precomputed analysis of real Oriane data. Every claim shown has been approved by a human and retains its exact source quotation. Narrative summaries remain editorial drafts."
-                : 'Narrative DNA groups the specific claims, experiences and viewpoints expressed in social videos, and ties every one of them to a quotation from a source video. Try a topic such as "Loyers à Paris", or "error" to preview a failure.'}
-            </p>
+        {liveMounted && (
+          <div hidden={mode !== "live"}>
+            <JuryLivePanel onOpen={(clip, narrative) => setOpen({ clip, narrative })} />
           </div>
         )}
-        {phase.kind === "running" && <ProgressSteps events={events} mode={narrativeService.mode} />}
-        {phase.kind === "error" && (
-          <ErrorState
-            message={phase.message}
-            onRetry={() => lastQuery.current && run(lastQuery.current)}
-          />
-        )}
-        {phase.kind === "done" && (
-          <>
-            <div className="mb-6 flex items-baseline justify-between gap-4">
-              <h1 className="font-serif text-4xl">“{phase.result.query.topic}”</h1>
-              <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                {phase.result.narratives.length} narrative
-                {phase.result.narratives.length === 1 ? "" : "s"}
-              </span>
-            </div>
-            {phase.result.mode === "precomputed" && (
-              <p className="mb-6 rounded-md border border-border bg-card p-4 text-sm text-muted-foreground">
-                Precomputed analysis of real Oriane data · 9 human-approved claims. Narrative titles
-                and summaries are editorial drafts. No live API calls or search filters are applied.
+        <div hidden={mode !== "explore"}>
+          {phase.kind === "idle" && (
+            <div className="max-w-2xl py-12">
+              <h1 className="font-serif text-5xl leading-tight">
+                Which arguments are people making — and where is the proof?
+              </h1>
+              <p className="mt-4 text-lg text-muted-foreground">
+                {precomputed
+                  ? "Explore two narrative groups and three individual student-housing observations from a precomputed analysis of real Oriane data. Every claim shown has been approved by a human and retains its exact source quotation. Narrative summaries remain editorial drafts."
+                  : 'Narrative DNA groups the specific claims, experiences and viewpoints expressed in social videos, and ties every one of them to a quotation from a source video. Try a topic such as "Loyers à Paris", or "error" to preview a failure.'}
               </p>
-            )}
-            <CorpusSummary corpus={phase.result.corpus} mode={phase.result.mode} />
-            {phase.result.narratives.length === 0 ? (
-              <EmptyState onReset={() => setPhase({ kind: "idle" })} />
-            ) : (
-              <div className="space-y-14">
-                {phase.result.narratives.map((n, i) => (
-                  <NarrativeSection
-                    key={n.id}
-                    narrative={n}
-                    index={i}
-                    videosAnalyzed={phase.result.corpus.videosAnalyzed}
-                    onOpen={(clip, narrative) => setOpen({ clip, narrative })}
-                  />
-                ))}
+            </div>
+          )}
+          {phase.kind === "running" && (
+            <ProgressSteps events={events} mode={narrativeService.mode} />
+          )}
+          {phase.kind === "error" && (
+            <ErrorState
+              message={phase.message}
+              onRetry={() => lastQuery.current && run(lastQuery.current)}
+            />
+          )}
+          {phase.kind === "done" && (
+            <>
+              <div className="mb-6 flex items-baseline justify-between gap-4">
+                <h1 className="font-serif text-4xl">“{phase.result.query.topic}”</h1>
+                <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                  {phase.result.narratives.length} narrative
+                  {phase.result.narratives.length === 1 ? "" : "s"}
+                </span>
               </div>
-            )}
-            {!!phase.result.individualObservations?.length && (
-              <IndividualObservations
-                clips={phase.result.individualObservations}
-                onOpen={(clip) => setOpen({ clip, narrative: null })}
-              />
-            )}
-          </>
-        )}
+              {phase.result.mode === "precomputed" && (
+                <p className="mb-6 rounded-md border border-border bg-card p-4 text-sm text-muted-foreground">
+                  Precomputed analysis of real Oriane data · 9 human-approved claims. Narrative
+                  titles and summaries are editorial drafts. No live API calls or search filters are
+                  applied.
+                </p>
+              )}
+              <CorpusSummary corpus={phase.result.corpus} mode={phase.result.mode} />
+              {phase.result.narratives.length === 0 ? (
+                <EmptyState onReset={() => setPhase({ kind: "idle" })} />
+              ) : (
+                <div className="space-y-14">
+                  {phase.result.narratives.map((n, i) => (
+                    <NarrativeSection
+                      key={n.id}
+                      narrative={n}
+                      index={i}
+                      videosAnalyzed={phase.result.corpus.videosAnalyzed}
+                      onOpen={(clip, narrative) => setOpen({ clip, narrative })}
+                    />
+                  ))}
+                </div>
+              )}
+              {!!phase.result.individualObservations?.length && (
+                <IndividualObservations
+                  clips={phase.result.individualObservations}
+                  onOpen={(clip) => setOpen({ clip, narrative: null })}
+                />
+              )}
+            </>
+          )}
+        </div>
       </main>
 
       <footer className="mx-auto max-w-6xl border-t border-border px-6 py-6 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">

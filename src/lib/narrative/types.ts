@@ -47,7 +47,7 @@ export interface EvidenceClip {
   frameTimestampSec?: number;
   formulation?: string;
   discourseType?: DiscourseType;
-  provenance?: "precomputed" | "mock";
+  provenance?: "precomputed" | "mock" | "live";
 }
 
 export interface Narrative {
@@ -69,6 +69,10 @@ export interface Corpus {
 }
 
 export interface AnalysisResult {
+  cached?: boolean;
+  warnings?: string[];
+  counts?: import("../jury/contracts").LiveCounts;
+  metrics?: import("../jury/contracts").LiveMetrics;
   query: SearchQuery;
   corpus: Corpus;
   individualObservations?: EvidenceClip[];
