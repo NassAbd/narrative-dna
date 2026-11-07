@@ -69,15 +69,9 @@ export const EvidenceCard = forwardRef<HTMLButtonElement, Props>(function Eviden
       aria-label={`Evidence from ${clip.creator?.handle ?? "Creator unavailable"} on ${clip.platform ? platformLabel(clip.platform) : "Platform unavailable"}: ${clip.quote}`}
     >
       <EvidenceFrame clip={clip} />
-      {clip.discourseType && (
-        <span className="font-mono text-[10px] uppercase tracking-wider text-primary">
-          {clip.discourseType}
-        </span>
-      )}
-      <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-        <span>{clip.sourceType === "transcript" ? "Transcript" : "On-screen text"}</span>
-        <span>{range ?? "Timestamp unavailable"}</span>
-      </div>
+      <span className="font-mono text-[10px] uppercase tracking-wider text-primary">
+        {range ?? "Timestamp unavailable"}
+      </span>
       <blockquote lang="fr" className="line-clamp-4 font-serif text-lg leading-snug">
         « {clip.quote} »
       </blockquote>

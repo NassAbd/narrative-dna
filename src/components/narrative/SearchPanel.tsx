@@ -133,10 +133,7 @@ export function SearchPanel({
           )}
         </div>
         {precomputed && (
-          <p className="text-sm text-ink-muted">
-            Precomputed analysis of real Oriane data · no live search · publication period not
-            provided
-          </p>
+          <p className="text-sm text-ink-muted">Precomputed analysis · real Oriane data</p>
         )}
         {platforms.length === 0 && (
           <p className="text-sm text-ink-muted">Select at least one platform.</p>

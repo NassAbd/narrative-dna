@@ -30,10 +30,10 @@ export function NarrativeSection({ narrative, index, videosAnalyzed, onOpen }: P
           {String(index + 1).padStart(2, "0")}
         </span>
         <div className="max-w-3xl">
-          <h2 id={titleId} className="font-serif text-3xl leading-tight md:text-[2.1rem]">
+          <h2 id={titleId} className="font-serif text-3xl leading-tight md:text-[2.4rem]">
             {narrative.claim}
           </h2>
-          <p className="mt-3 text-muted-foreground">{narrative.summary}</p>
+          <p className="mt-3 line-clamp-2 max-w-2xl text-muted-foreground">{narrative.summary}</p>
           <p className="mt-4 font-mono text-xs uppercase tracking-wider">
             <span className="text-primary">{narrative.supportingVideoCount}</span> of{" "}
             {videosAnalyzed} represented videos support this group

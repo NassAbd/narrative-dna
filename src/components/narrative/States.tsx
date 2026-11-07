@@ -10,16 +10,25 @@ export function CorpusSummary({ corpus, mode }: { corpus: Corpus; mode: Analysis
       String(mode === "precomputed" ? corpus.approvedClaimCount : corpus.videosAnalyzed),
     ],
     ["Platforms", corpus.platforms.map(platformLabel).join(", ") || "Not provided"],
-    [
-      "Period",
-      corpus.dateRange
-        ? `${formatDate(corpus.dateRange.from)} – ${formatDate(corpus.dateRange.to)}`
-        : "Not provided",
-    ],
+    ...(mode === "precomputed"
+      ? []
+      : [
+          [
+            "Period",
+            corpus.dateRange
+              ? `${formatDate(corpus.dateRange.from)} – ${formatDate(corpus.dateRange.to)}`
+              : "Not provided",
+          ],
+        ]),
   ];
   return (
     <div className="mb-12">
-      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-4">
+      <dl
+        className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-4"
+        style={
+          mode === "precomputed" ? { gridTemplateColumns: "repeat(3, minmax(0, 1fr))" } : undefined
+        }
+      >
         {items.map(([k, val]) => (
           <div key={k} className="bg-card p-4">
             <dt className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
@@ -31,7 +40,7 @@ export function CorpusSummary({ corpus, mode }: { corpus: Corpus; mode: Analysis
       </dl>
       <p className="mt-3 text-sm text-muted-foreground">
         {mode === "precomputed"
-          ? "Approved evidence selection only; not the full retrieved corpus or a representative sample of public opinion."
+          ? "Approved evidence only — not a representative sample of public opinion."
           : "Reflects analyzed videos only; not representative of public opinion."}
         {mode === "mock" && " All content shown is fictional mock data."}
       </p>

@@ -137,7 +137,7 @@ export function Index() {
               </h1>
               <p className="mt-4 text-lg text-muted-foreground">
                 {precomputed
-                  ? "Explore two narrative groups and three individual student-housing observations from a precomputed analysis of real Oriane data. Every claim shown has been approved by a human and retains its exact source quotation. Narrative summaries remain editorial drafts."
+                  ? "Explore the narratives inside social videos. Verify every insight against its source."
                   : 'Narrative DNA groups the specific claims, experiences and viewpoints expressed in social videos, and ties every one of them to a quotation from a source video. Try a topic such as "Loyers à Paris", or "error" to preview a failure.'}
               </p>
             </div>
@@ -160,9 +160,7 @@ export function Index() {
               </div>
               {phase.result.mode === "precomputed" && (
                 <p className="mb-6 rounded-md border border-border bg-card p-4 text-sm text-muted-foreground">
-                  Precomputed analysis of real Oriane data · 9 human-approved claims. Narrative
-                  titles and summaries are editorial drafts. No live API calls or search filters are
-                  applied.
+                  Precomputed · 9 human-approved claims · narrative summaries are editorial drafts.
                 </p>
               )}
               <CorpusSummary corpus={phase.result.corpus} mode={phase.result.mode} />
