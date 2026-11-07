@@ -80,3 +80,10 @@ it("refuses fabricated live quotation context and reversed timestamps", () => {
   base.individualObservations[0]!.endSec = 11;
   expect(LiveResultSchema.safeParse(base).success).toBe(true);
 });
+
+it("fails closed with a concise error for malformed server sessions", async () => {
+  const client = createJuryClient(
+    vi.fn<typeof fetch>().mockResolvedValue(Response.json({ available: true })),
+  );
+  await expect(client.session()).rejects.toThrow("Jury Live is temporarily unavailable.");
+});

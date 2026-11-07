@@ -13,6 +13,8 @@ const messages: Record<string, string> = {
   provider_rate_limited: "The provider is temporarily rate limited.",
   timeout: "Analysis timed out. Its reserved quota is retained.",
   cancelled: "Analysis cancelled. Its reserved quota is retained.",
+  invalid_result:
+    "The backend response could not be validated. No unverified evidence is displayed.",
 };
 export class JuryClientError extends Error {
   constructor(public code: string) {
@@ -21,6 +23,16 @@ export class JuryClientError extends Error {
         "The analysis could not be completed. No new provider call was retried automatically.",
     );
   }
+}
+function parseJob(value: unknown) {
+  const result = LiveJobSchema.safeParse(value);
+  if (!result.success) throw new JuryClientError("invalid_result");
+  return result.data;
+}
+function parseSession(value: unknown) {
+  const result = SessionSchema.safeParse(value);
+  if (!result.success) throw new JuryClientError("live_unavailable");
+  return result.data;
 }
 export function createJuryClient(fetcher: typeof fetch = fetch) {
   let csrf = "";
@@ -64,12 +76,12 @@ export function createJuryClient(fetcher: typeof fetch = fetch) {
     return data;
   }
   async function session() {
-    const s = SessionSchema.parse(await request("/session"));
+    const s = parseSession(await request("/session"));
     csrf = s.csrfToken ?? "";
     return s;
   }
   async function login(password: string) {
-    const s = SessionSchema.parse(await request("/login", { password }));
+    const s = parseSession(await request("/login", { password }));
     csrf = s.csrfToken ?? "";
     return s;
   }
@@ -107,7 +119,7 @@ export function createJuryClient(fetcher: typeof fetch = fetch) {
       job.status === "queued"
         ? request(`/jobs/${job.id}/run`, {}, options.signal)
             .then((data) => {
-              const parsed = LiveJobSchema.parse(data);
+              const parsed = parseJob(data);
               if (parsed.status === "completed") job = parsed;
             })
             .catch((error) => {
@@ -148,7 +160,7 @@ export function createJuryClient(fetcher: typeof fetch = fetch) {
         };
         options.signal?.addEventListener("abort", onAbort, { once: true });
       });
-      job = LiveJobSchema.parse(await request(`/jobs/${job.id}`, undefined, options.signal));
+      job = parseJob(await request(`/jobs/${job.id}`, undefined, options.signal));
     }
   }
   return {
@@ -156,16 +168,13 @@ export function createJuryClient(fetcher: typeof fetch = fetch) {
     login,
     logout,
     async analyze(query: LiveQuery, options: AnalyzeOptions = {}) {
-      const job = LiveJobSchema.parse(
+      const job = parseJob(
         await request("/jobs", { query, idempotencyKey: crypto.randomUUID() }, options.signal),
       );
       return wait(job, options);
     },
     async resume(id: string, options: AnalyzeOptions = {}) {
-      return wait(
-        LiveJobSchema.parse(await request(`/jobs/${id}`, undefined, options.signal)),
-        options,
-      );
+      return wait(parseJob(await request(`/jobs/${id}`, undefined, options.signal)), options);
     },
     async cancel() {
       if (currentJob) await request(`/jobs/${currentJob}/cancel`, {});
