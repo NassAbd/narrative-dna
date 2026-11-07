@@ -1,6 +1,25 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
+import { useState } from "react";
 import { Index } from "@/routes/index";
+import { JuryLivePanel } from "@/components/narrative/JuryLivePanel";
+import { EvidenceDrawer } from "@/components/narrative/EvidenceDrawer";
+import type { EvidenceClip, Narrative } from "@/lib/narrative";
+function LiveHarness() {
+  const [open, setOpen] = useState<{ clip: EvidenceClip; narrative: Narrative | null } | null>(
+    null,
+  );
+  return (
+    <>
+      <JuryLivePanel onOpen={(clip, narrative) => setOpen({ clip, narrative })} />
+      <EvidenceDrawer
+        clip={open?.clip ?? null}
+        narrative={open?.narrative ?? null}
+        onClose={() => setOpen(null)}
+      />
+    </>
+  );
+}
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
@@ -12,11 +31,12 @@ it("contacts no backend in Explore and gracefully disables unavailable Jury Live
   vi.stubGlobal("fetch", fetcher);
   render(<Index />);
   expect(fetcher).not.toHaveBeenCalled();
-  fireEvent.click(screen.getByRole("button", { name: "Jury Live" }));
-  await screen.findByText(/Jury Live is currently unavailable/);
+  expect(screen.queryByRole("button", { name: "Jury Live" })).not.toBeInTheDocument();
   expect(screen.queryByLabelText("Jury password")).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole("button", { name: "Explore" }));
-  expect(screen.getByRole("button", { name: "View precomputed analysis" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Analyze narratives" })).toBeInTheDocument();
+  cleanup();
+  render(<LiveHarness />);
+  await screen.findByText(/Jury Live is currently unavailable/);
 });
 it("requires server authentication and clears an invalid password", async () => {
   const fetcher = vi
@@ -24,8 +44,7 @@ it("requires server authentication and clears an invalid password", async () => 
     .mockResolvedValueOnce(Response.json({ available: true, authenticated: false }))
     .mockResolvedValueOnce(Response.json({ errorCode: "invalid_credentials" }, { status: 401 }));
   vi.stubGlobal("fetch", fetcher);
-  render(<Index />);
-  fireEvent.click(screen.getByRole("button", { name: "Jury Live" }));
+  render(<LiveHarness />);
   const input = await screen.findByLabelText("Jury password");
   fireEvent.change(input, { target: { value: "bad-password" } });
   fireEvent.click(screen.getByRole("button", { name: "Unlock Jury Live" }));
@@ -97,8 +116,7 @@ it("renders cached live evidence without calling it human-approved or issuing pr
       Response.json({ available: true, authenticated: true, csrfToken: "csrf", remaining: 0 }),
     );
   vi.stubGlobal("fetch", fetcher);
-  render(<Index />);
-  fireEvent.click(screen.getByRole("button", { name: "Jury Live" }));
+  render(<LiveHarness />);
   fireEvent.change(await screen.findByLabelText("Jury password"), {
     target: { value: "private-password" },
   });

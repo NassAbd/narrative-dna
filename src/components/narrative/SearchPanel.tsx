@@ -147,7 +147,7 @@ export function SearchPanel({
         disabled={busy || !topic.trim() || platforms.length === 0}
         className="h-12 rounded-md bg-primary px-7 font-medium text-primary-foreground transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:opacity-50"
       >
-        {busy ? "Loading…" : precomputed ? "View precomputed analysis" : "Analyze narratives"}
+        {busy ? "Loading…" : "Analyze narratives"}
       </button>
     </form>
   );

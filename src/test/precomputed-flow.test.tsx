@@ -12,7 +12,7 @@ it("loads the real groups and separate observations and opens exact evidence wit
   vi.stubGlobal("fetch", fetch);
   render(<Index />);
   expect(screen.getByLabelText("Topic")).toHaveAttribute("readonly");
-  fireEvent.click(screen.getByRole("button", { name: "View precomputed analysis" }));
+  fireEvent.click(screen.getByRole("button", { name: "Analyze narratives" }));
   await screen.findByRole("heading", { name: data.narratives[0]!.title });
   expect(screen.getByRole("heading", { name: data.narratives[1]!.title })).toBeInTheDocument();
   expect(screen.getByText("2 narratives")).toBeInTheDocument();
@@ -51,7 +51,7 @@ it("loads the real groups and separate observations and opens exact evidence wit
 });
 it("opens an ungrouped approved proposal without calling it a narrative or an argument", async () => {
   render(<Index />);
-  fireEvent.click(screen.getByRole("button", { name: "View precomputed analysis" }));
+  fireEvent.click(screen.getByRole("button", { name: "Analyze narratives" }));
   const list = await screen.findByRole("list", { name: "Individual student-housing observations" });
   expect(within(list).getAllByRole("button")).toHaveLength(3);
   fireEvent.click(within(list).getAllByRole("button")[0]!);

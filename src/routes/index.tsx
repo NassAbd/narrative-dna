@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   DEFAULT_PLATFORMS,
   PRECOMPUTED_QUERY,
@@ -7,13 +7,10 @@ import {
   type AnalysisResult,
   type EvidenceClip,
   type Narrative,
-  type ProgressEvent,
   type SearchQuery,
-  type StepId,
 } from "@/lib/narrative";
-import { JuryLivePanel } from "@/components/narrative/JuryLivePanel";
+import { DemoWorkflow, DEMO_STEPS } from "@/components/narrative/DemoWorkflow";
 import { SearchPanel } from "@/components/narrative/SearchPanel";
-import { ProgressSteps } from "@/components/narrative/ProgressSteps";
 import { NarrativeSection } from "@/components/narrative/NarrativeSection";
 import { IndividualObservations } from "@/components/narrative/IndividualObservations";
 import { EvidenceDrawer } from "@/components/narrative/EvidenceDrawer";
@@ -47,29 +44,54 @@ type Phase =
   | { kind: "error"; message: string };
 
 export function Index() {
-  const [mode, setMode] = useState<"explore" | "live">("explore");
-  const [liveMounted, setLiveMounted] = useState(false);
   const precomputed = narrativeService.mode === "precomputed";
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
-  const [events, setEvents] = useState<Partial<Record<StepId, ProgressEvent>>>({});
+  const [demoStep, setDemoStep] = useState(0);
   const [open, setOpen] = useState<{ clip: EvidenceClip; narrative: Narrative | null } | null>(
     null,
   );
   const lastQuery = useRef<SearchQuery | null>(null);
   const abort = useRef<AbortController | null>(null);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const clearTimers = () => {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+  };
+  useEffect(
+    () => () => {
+      clearTimers();
+      abort.current?.abort();
+    },
+    [],
+  );
+  const wait = (ms: number, signal: AbortSignal) =>
+    new Promise<void>((resolve) => {
+      if (signal.aborted || ms <= 0) return resolve();
+      timers.current.push(setTimeout(resolve, ms));
+    });
 
   const run = async (q: SearchQuery) => {
+    if (phase.kind === "running") return;
     abort.current?.abort();
+    clearTimers();
     const ctrl = new AbortController();
     abort.current = ctrl;
     lastQuery.current = q;
-    setEvents({});
+    setDemoStep(0);
     setPhase({ kind: "running" });
     try {
-      const result = await narrativeService.analyze(q, {
-        signal: ctrl.signal,
-        onProgress: (e) => setEvents((cur) => ({ ...cur, [e.step]: e })),
-      });
+      const reduced =
+        typeof window !== "undefined" &&
+        window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      const stepMs = import.meta.env.MODE === "test" ? 0 : reduced ? 450 : 850;
+      const loading = narrativeService.analyze(q, { signal: ctrl.signal });
+      for (let i = 1; i <= DEMO_STEPS.length; i++) {
+        await wait(stepMs, ctrl.signal);
+        if (ctrl.signal.aborted) return;
+        setDemoStep(i);
+      }
+      const result = await loading;
+      if (ctrl.signal.aborted) return;
       setPhase({ kind: "done", result });
     } catch (err) {
       if (ctrl.signal.aborted) return;
@@ -91,39 +113,10 @@ export function Index() {
               </span>
             </div>
             <span className="rounded-sm border border-primary px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.18em] text-accent">
-              {mode === "live"
-                ? "Jury Live · protected"
-                : precomputed
-                  ? "Real data · precomputed"
-                  : "Mock data"}
+              {precomputed ? "Real data · precomputed" : "Mock data"}
             </span>
           </div>
-          <nav aria-label="Analysis mode" className="mb-8 flex gap-3">
-            <button
-              type="button"
-              aria-pressed={mode === "explore"}
-              onClick={() => {
-                setMode("explore");
-                setOpen(null);
-              }}
-              className="rounded-full border border-ink-border px-5 py-2 aria-pressed:bg-primary aria-pressed:text-primary-foreground"
-            >
-              Explore
-            </button>
-            <button
-              type="button"
-              aria-pressed={mode === "live"}
-              onClick={() => {
-                setLiveMounted(true);
-                setMode("live");
-                setOpen(null);
-              }}
-              className="rounded-full border border-ink-border px-5 py-2 aria-pressed:bg-primary aria-pressed:text-primary-foreground"
-            >
-              Jury Live
-            </button>
-          </nav>
-          <div hidden={mode !== "explore"}>
+          <div>
             <SearchPanel
               initialTopic="Logement en France"
               initialPlatforms={precomputed ? PRECOMPUTED_QUERY.platforms : DEFAULT_PLATFORMS}
@@ -136,12 +129,7 @@ export function Index() {
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-10">
-        {liveMounted && (
-          <div hidden={mode !== "live"}>
-            <JuryLivePanel onOpen={(clip, narrative) => setOpen({ clip, narrative })} />
-          </div>
-        )}
-        <div hidden={mode !== "explore"}>
+        <div>
           {phase.kind === "idle" && (
             <div className="max-w-2xl py-12">
               <h1 className="font-serif text-5xl leading-tight">
@@ -154,9 +142,7 @@ export function Index() {
               </p>
             </div>
           )}
-          {phase.kind === "running" && (
-            <ProgressSteps events={events} mode={narrativeService.mode} />
-          )}
+          {phase.kind === "running" && <DemoWorkflow current={demoStep} />}
           {phase.kind === "error" && (
             <ErrorState
               message={phase.message}
@@ -207,11 +193,9 @@ export function Index() {
       </main>
 
       <footer className="mx-auto max-w-6xl border-t border-border px-6 py-6 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-        {mode === "live"
-          ? "Jury Live · AI-generated · source-verified · not editorially reviewed"
-          : precomputed
-            ? "Real Oriane evidence · precomputed analysis · missing metadata is not reconstructed"
-            : "Mock mode · fictional creators and quotations · no source links are invented"}
+        {precomputed
+          ? "Real Oriane evidence · precomputed analysis · missing metadata is not reconstructed"
+          : "Mock mode · fictional creators and quotations · no source links are invented"}
       </footer>
 
       <EvidenceDrawer
