@@ -40,6 +40,7 @@ export function storage(secrets: JuryBindings): Rpc {
     try {
       const response = await fetch(`${url.replace(/\/$/, "")}/rest/v1/rpc/jury_backend`, {
         method: "POST",
+        redirect: "manual",
         headers,
         body: JSON.stringify({ p_action: action, p_args: args }),
         signal: signal

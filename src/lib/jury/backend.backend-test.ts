@@ -585,3 +585,18 @@ it("excludes claims the extractor marks off-topic or unsupported without another
   expect(result.individualObservations[0]?.discourseType).toBe("description");
   expect(result.warnings).toContain("rejected_claim");
 });
+it("uses Workers-compatible manual redirects and never follows a provider redirect", async () => {
+  const fetcher = vi.fn<typeof fetch>(async (_url, init) => {
+    expect(init?.redirect).toBe("manual");
+    return new Response(null, { status: 302, headers: { location: "https://untrusted.invalid/" } });
+  });
+  await expect(
+    runPipeline(
+      { topic: "logement étudiant", platforms: ["tiktok"], language: "fr", dateRange: null },
+      secrets,
+      { fetcher, signal: AbortSignal.timeout(5000), stage: async () => {} },
+    ),
+  ).rejects.toThrow("oriane_unavailable");
+  expect(fetcher).toHaveBeenCalledTimes(1);
+  expect(fetcher.mock.calls[0]?.[0]).toBe(SEARCH_URL);
+});

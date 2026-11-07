@@ -203,7 +203,7 @@ export async function runPipeline(
         headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
         body: JSON.stringify(body),
         signal,
-        redirect: "error",
+        redirect: "manual",
       });
       providerStatus(response.status, provider);
       if (response.status === 206) warnings.push("oriane_partial_response");
