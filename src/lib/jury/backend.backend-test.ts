@@ -468,3 +468,55 @@ it("rejects unsupported group wording while preserving verified individual exper
   expect(result.individualObservations).toHaveLength(2);
   expect(result.warnings).toContain("unsupported_group_wording_rejected");
 });
+it("keeps verified observations when grouping would exceed the aggregate model input budget", async () => {
+  const text = "Mon loyer est trop cher. " + "texte ".repeat(829);
+  let call = 0;
+  const fetcher = vi.fn<typeof fetch>(async () => {
+    if (call++ === 0)
+      return Response.json({
+        data: {
+          results: Array.from({ length: 8 }, (_, i) => ({
+            id: `v${i}`,
+            platform: "tiktok",
+            media: [{ transcript: text }],
+          })),
+        },
+      });
+    return Response.json({
+      choices: [
+        {
+          finish_reason: "stop",
+          message: {
+            content: JSON.stringify({
+              videos: Array.from({ length: 8 }, (_, i) => ({
+                videoId: `v${i}`,
+                relevance: "relevant",
+                genre: "non-fiction",
+                speakerConfidence: "high",
+                relevanceReason: "Personal housing experience",
+                claims: [
+                  {
+                    passageId: `v${i}:0`,
+                    formulation: "La personne juge son loyer trop cher.",
+                    type: "experience",
+                  },
+                ],
+              })),
+            }),
+          },
+        },
+      ],
+      usage: { prompt_tokens: 200, completion_tokens: 100 },
+    });
+  });
+  const result = await runPipeline(
+    { topic: "coût du loyer", platforms: ["tiktok"], language: "fr", dateRange: null },
+    secrets,
+    { fetcher, signal: AbortSignal.timeout(5000), stage: async () => {} },
+  );
+  expect(fetcher).toHaveBeenCalledTimes(2);
+  expect(result.individualObservations).toHaveLength(8);
+  expect(result.narratives).toEqual([]);
+  expect(result.warnings).toContain("clustering_skipped_input_limit");
+  expect(result.metrics.openaiRequests).toBe(1);
+});

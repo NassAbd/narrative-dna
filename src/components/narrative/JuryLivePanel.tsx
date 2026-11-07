@@ -216,6 +216,8 @@ export function JuryLivePanel({
   );
 }
 const warningMessages: Record<string, string> = {
+  clustering_skipped_input_limit:
+    "Grouping was skipped to stay within the model input budget. Source-verified individual observations are shown instead.",
   oriane_partial_response:
     "Oriane returned partial results; this analysis uses only the evidence received.",
   source_metadata_incomplete: "Some source metadata was unavailable or invalid.",
