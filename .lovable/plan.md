@@ -1,24 +1,57 @@
-# Narrative DNA — Plan
+# Narrative DNA — Revised Plan
 
-A desktop-first editorial intelligence tool showing the narratives in social videos about a topic, each backed by video evidence. All data is clearly labeled MOCK (housing in France). No external calls, auth, payments or database.
+Desktop-first editorial tool revealing the specific arguments expressed in social videos about a topic, each traceable to a source video. MOCK mode only (housing in France), clearly labeled. No Oriane/OpenAI calls, auth, payments, database or API keys in the frontend.
 
-## Design direction
-- Premium investigative newsroom: charcoal ink (dark header/drawer), warm off-white paper surfaces, restrained violet accent for focus, active states and claim markers.
-- Typography: Instrument Serif (headlines, narrative claims) + IBM Plex Sans (UI) + IBM Plex Mono (timestamps, metadata).
-- Strong hierarchy, thin rules, numbered narrative sections, a persistent "MOCK DATA" badge.
+## Design (unchanged)
+Charcoal ink, warm off-white surfaces, restrained violet accents. Instrument Serif (claims, headlines), IBM Plex Sans (UI), IBM Plex Mono (timestamps, counts). Numbered narrative sections, thin rules, persistent "MOCK DATA" badge.
 
 ## Screens and states (single page at `/`)
-1. **Search bar**: topic input (prefilled "Logement en France"), platform multi-select (TikTok, YouTube, Instagram, X), date range presets (7d / 30d / 90d / custom), Analyze button.
-2. **Progress state**: real sequential steps driven by the mock service: Collecting videos → Transcribing → Extracting claims → Clustering narratives → Verifying evidence. Each shows pending / active / done, plus a progress bar; screen-reader live region.
-3. **Results**: summary strip (videos analyzed, narratives, date span, platforms), then 4 narrative sections. Each has a precise argumentative claim as title (e.g. "Airbnb-style short-term rentals are the main cause of rent increases in Paris"), short synthesis, prevalence and stance chips, and a horizontal scroll-snap carousel of 3–5 evidence cards (keyboard arrows + prev/next buttons, swipeable on mobile).
-4. **Evidence card**: stylized frame placeholder (generated gradient + time overlay, no real thumbnails), quote excerpt, creator handle, platform, date.
-5. **Evidence drawer** (side sheet; bottom sheet on mobile): larger frame, full literal quote (French original + English translation), time range, creator, platform, publish date, a "Source URL unavailable — mock data" note instead of any link. Esc closes, focus is trapped and restored.
-6. **Empty state** (no narratives for the filters, e.g. topic with no match) and **error state** (simulated failure, e.g. topic containing "error"), each with a retry/reset action. Initial idle state with example topics.
+1. **Search**: topic input, platform filter (TikTok default, Instagram, YouTube — driven by a config list), date presets (7d / 30d / 90d).
+2. **Progress**: five stages — Collecting videos, Retrieving transcripts and evidence, Extracting arguments, Clustering narratives, Verifying evidence. Each shows status and "processed / total" counts when provided; no arbitrary percentages. A "Simulated progress (mock)" label in mock mode. Screen-reader live region.
+3. **Results**: corpus strip — "Videos found: 42 · Videos analyzed: 30 · Platforms · Date range" plus a note: "Reflects analyzed videos only; not representative of public opinion." Then 0–5 narrative sections. Each title is a neutral, attributed argument (e.g. "Some renters argue that income requirements prevent them from accessing housing"), a short summary, and a count: "8 of 30 analyzed videos mention this argument." Horizontal keyboard/swipe carousel of evidence cards.
+4. **Evidence card**: frame (or neutral placeholder when absent), French quote excerpt, timestamp or "Timestamp unavailable", source type tag (Transcript / On-screen text), creator, platform, date.
+5. **Evidence drawer** (side sheet, bottom sheet on mobile): original French quote, transcript context, video metadata incl. video ID, start/end time, frame with its timestamp, source link only if `sourceUrl` exists. Missing fields show quiet "Not available" labels. No translation. Esc closes, focus restored.
+6. **Idle, empty (0 narratives), and error states** with retry/reset.
 
-## Technical details
-- `src/lib/narrative/types.ts`: `Platform`, `SearchQuery`, `AnalysisStep`, `StepStatus`, `EvidenceClip` (id, quote, quoteTranslation, startSec, endSec, creator, platform, publishedAt, frame descriptor), `Narrative` (id, claim, summary, stance, prevalence, evidence[]), `AnalysisResult`.
-- `src/lib/narrative/mock-data.ts`: the single replaceable module holding all MOCK French housing data (fictional creators, no URLs).
-- `src/lib/narrative/service.ts`: typed `NarrativeService` interface + `mockNarrativeService.analyze(query, onStep)` with simulated step delays, platform/date filtering, empty and error paths. Swapping to a real API means implementing the same interface.
-- Components in `src/components/narrative/`: SearchPanel, ProgressSteps, NarrativeSection, EvidenceCarousel, EvidenceCard, EvidenceDrawer (shadcn Sheet), EmptyState, ErrorState.
-- Design tokens in `src/styles.css` (oklch), fonts via `<link>` in root head; route head metadata updated.
-- Small vitest tests for the service: filtering by platform, empty result, error path, each narrative has 3–5 clips.
+## Data contracts (`src/lib/narrative/types.ts`)
+```text
+Platform = "tiktok" | "instagram" | "youtube"
+SearchQuery { topic; platforms: Platform[]; dateRange: { from; to } }
+
+EvidenceClip {
+  id; videoId; quote; startSec: number|null; endSec: number|null;
+  sourceType: "transcript" | "onScreenText"; transcriptContext?;
+  creator { handle; displayName? }; platform; publishedAt;
+  sourceUrl?; frameUrl?; frameTimestampSec?
+}
+Narrative { id; claim; summary; supportingVideoCount; evidence: EvidenceClip[] }
+Corpus { videosFound; videosAnalyzed; platforms; dateRange }
+AnalysisResult { query; corpus; narratives: Narrative[] (0–5); mode: "mock" | "live" }
+
+StepId = collect | retrieve | extract | cluster | verify
+ProgressEvent { step: StepId; status: pending|active|done|error; processed?; total?; message? }
+
+NarrativeService {
+  analyze(query, { onProgress(e: ProgressEvent), signal?: AbortSignal }): Promise<AnalysisResult>
+}
+```
+A single video can appear in several narratives (same `videoId`, different clips).
+
+## Future backend connection
+```text
+UI ──> NarrativeService (interface)
+         ├─ mockNarrativeService   (now: mock-data.ts + simulated events)
+         └─ liveNarrativeService   (later, by Codex: server function calling
+                                    Oriane + OpenAI, streams ProgressEvents)
+```
+- Service chosen in one place (`src/lib/narrative/index.ts`); UI never imports mock data directly.
+- Live implementation will run server-side (keys stay on the server) and stream the same `ProgressEvent` shape; UI needs no rewrite.
+
+## Files
+- `types.ts`, `mock-data.ts` (all fictional mock content, no invented URLs; some clips intentionally missing frames/timestamps), `mock-service.ts`, `platforms.ts`, `index.ts`.
+- Components: SearchPanel, ProgressSteps, CorpusSummary, NarrativeSection, EvidenceCarousel, EvidenceCard, EvidenceDrawer, EmptyState, ErrorState.
+- Tokens in `src/styles.css`, fonts via root head links, page metadata.
+- Mock service triggers: topic containing "error" → error; "vide"/no matches → 0 narratives; platform filter changes narrative count.
+
+## Tests (vitest)
+Platform filtering; empty and error paths; variable narrative counts 0–5; same `videoId` across narratives; clips with missing optional fields render fallbacks; mock emits all five steps in order ending "done".
