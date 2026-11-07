@@ -32,3 +32,8 @@ use the editor.
 ## Narrative DNA architecture
 - UI talks only to the `NarrativeService` exported from `src/lib/narrative/index.ts`; never import mock data in components — so a live Oriane/OpenAI backend (server-side, keys never in browser) can replace the mock without UI changes.
 - All mock content lives in `src/lib/narrative/mock-data.ts`; never invent source URLs or timestamps.
+
+## Jury backend boundaries
+- Jury HTTP handling stays in `src/lib/jury/backend.server.ts` and server-only helpers; the application owner wires it into the server entry so Explore remains independent.
+- Jury persistent state is accessed only through the service-role-only `jury_backend` transactional RPC; singleton locking prevents quota races and provider overlap.
+- Jury uses the user's OpenAI project through server-only official API calls, explicitly authorized for the validated pipeline; never route these calls through workspace AI billing.

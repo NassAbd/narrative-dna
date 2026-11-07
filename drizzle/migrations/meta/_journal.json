@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794054613697,
+      "tag": "0000_jury_private_transactional_backend",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794054638254,
+      "tag": "0001_jury_reservation_and_lease_corrections",
+      "breakpoints": true
+    }
+  ]
+}
