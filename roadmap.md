@@ -1,12 +1,13 @@
 # Jury Live rollout
 
-- [x] Apply private transactional schema and server-only RPCs.
-- [x] Implement server sessions, CSRF, atomic quotas, idempotent jobs and cache.
-- [x] Connect the protected Jury UI while preserving anonymous Explore.
-- [x] Pass TypeScript, 46 frontend/core tests and 22 backend tests.
-- [x] Pass lint: generated integrations retain platform formatting and remain covered by TypeScript/non-formatting ESLint rules; six existing React refresh warnings remain.
-- [x] Build Cloudflare module with nodejs_compat and compatibility date 2026-11-07.
-- [x] Owner configured production provider secrets and local jury test password.
-- [ ] Publish and verify anonymous Explore and disabled Jury mode.
-- [ ] Enable Jury mode, run one bounded paid smoke test, verify quota/cache/source evidence.
-- [ ] Record final production GO/NO-GO and measured usage.
+- [x] Private transactional schema and server-only RPCs.
+- [x] Server sessions, CSRF, atomic quotas, idempotent jobs and cache.
+- [x] Protected Jury UI; anonymous Explore and nine approved cards preserved.
+- [x] TypeScript, 47 frontend/core + 25 backend tests, lint and production build.
+- [x] Production secret injection and authenticated endpoints verified.
+- [x] Initial live run completed; repeated corrected extraction runs failed within bounded deadlines.
+- [x] Paid tests stopped: four reservations, six remaining; no active job.
+- [ ] Reliable current extraction and meaningful live clustering remain unvalidated.
+- [ ] Jury Live remains NO-GO and must be disabled in production; verify disabled rollout.
+
+See JURY_LIVE.md for measurements, failures, safeguards and the smallest next step.

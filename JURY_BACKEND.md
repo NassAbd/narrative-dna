@@ -1,3 +1,5 @@
+> Historical handoff. See [JURY_LIVE.md](JURY_LIVE.md) for the current wiring, deadlines, secret setup, lint policy and production verification.
+
 # Jury Live backend handoff
 
 ## Status
@@ -25,12 +27,12 @@ Job responses carry `id,status,stage,completedStages,cached,remaining,result,err
 
 Save these through **Project Settings → Secrets**, never chat or `.env`/`VITE_*`:
 
-| Name | Configuration |
-| --- | --- |
-| `ORIANE_API_KEY` | Oriane account credential |
-| `OPENAI_API_KEY` | Your OpenAI project credential; direct official `gpt-4o-mini` requests |
-| `JURY_ACCESS_PASSWORD` | At least 16 characters; stored server-side only |
-| `JURY_LIVE_ENABLED` | `false` until deployment and duration are verified; only exact `true` enables |
+| Name                   | Configuration                                                                 |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| `ORIANE_API_KEY`       | Oriane account credential                                                     |
+| `OPENAI_API_KEY`       | Your OpenAI project credential; direct official `gpt-4o-mini` requests        |
+| `JURY_ACCESS_PASSWORD` | At least 16 characters; stored server-side only                               |
+| `JURY_LIVE_ENABLED`    | `false` until deployment and duration are verified; only exact `true` enables |
 
 The managed `SUPABASE_SERVICE_ROLE_KEY` and `SUPABASE_URL` already exist. Do not ask users to obtain or copy the managed service credential. The handler reads direct string bindings from `env` first and request-time `process.env` second. It never reads `VITE_*` or imports the browser client. Opaque service keys use `apikey` without a fake JWT bearer header.
 

@@ -1,3 +1,5 @@
+> Historical handoff. See [JURY_LIVE.md](JURY_LIVE.md) for the current wiring, deadlines, secret setup, lint policy and production verification.
+
 # Jury Live: formatting and runtime setup handoff
 
 ## Scope and status
@@ -24,10 +26,10 @@ There is no callable secure credential-input form in the tools exposed to this s
 
 Add these user-supplied credentials there:
 
-| Name | Entry |
-| --- | --- |
-| `ORIANE_API_KEY` | Your Oriane credential |
-| `OPENAI_API_KEY` | Your OpenAI project credential |
+| Name                   | Entry                                               |
+| ---------------------- | --------------------------------------------------- |
+| `ORIANE_API_KEY`       | Your Oriane credential                              |
+| `OPENAI_API_KEY`       | Your OpenAI project credential                      |
 | `JURY_ACCESS_PASSWORD` | Your chosen access password, at least 16 characters |
 
 `JURY_LIVE_ENABLED` has been saved in the disabled state; leave it disabled until the production runtime and authenticated flow are verified. Managed backend credentials need no user copying, resetting, or re-saving. The user-created secret listing does not enumerate all managed backend bindings and cannot establish their production presence.

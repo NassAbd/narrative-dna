@@ -55,3 +55,5 @@ Tested with Node 24.14.0. Production output is a TanStack Start/Nitro Cloudflare
 https://narrative-evidence-atlas.lovable.app
 
 The public MVP was deployed and anonymously verified before enrichment. The nine approved cards now include real creator/date metadata and seven unique public Oriane frames. Enrichment does not alter formulations, quotes, transcript context, claim timestamps, approvals or narrative membership. See DEPLOYMENT.md for API provenance, media checks and playback limitations. Live API credentials are never needed to view the demo.
+
+Jury Live deployment, quotas, secret rotation and measured verification: [JURY_LIVE.md](JURY_LIVE.md).
