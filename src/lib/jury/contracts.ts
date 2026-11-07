@@ -1,5 +1,5 @@
 import { z } from "zod";
-export const LIVE_VERSION = "jury-v3-gpt4o-mini-2026-11-07";
+export const LIVE_VERSION = "jury-v4-gpt4o-mini-2026-11-07";
 export const LIVE_LIMITS = {
   analyses: 10,
   concurrent: 1,

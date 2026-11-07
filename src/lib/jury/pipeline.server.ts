@@ -196,12 +196,14 @@ export async function runPipeline(
     timeout: number,
   ) => {
     dependencies.signal.throwIfAborted();
+    const signal = AbortSignal.any([dependencies.signal, AbortSignal.timeout(timeout)]);
     try {
       const response = await fetcher(url, {
         method: "POST",
         headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
         body: JSON.stringify(body),
-        signal: AbortSignal.any([dependencies.signal, AbortSignal.timeout(timeout)]),
+        signal,
+        redirect: "error",
       });
       providerStatus(response.status, provider);
       if (response.status === 206) warnings.push("oriane_partial_response");
@@ -209,7 +211,11 @@ export async function runPipeline(
     } catch (error) {
       if (error instanceof JuryError) throw error;
       throw new JuryError(
-        dependencies.signal.aborted ? "execution_timeout" : `${provider}_network`,
+        dependencies.signal.aborted
+          ? "execution_timeout"
+          : signal.aborted
+            ? `${provider}_timeout`
+            : `${provider}_network`,
         502,
       );
     }
@@ -243,7 +249,7 @@ export async function runPipeline(
       },
       secrets["OPENAI_API_KEY"] ?? "",
       "openai",
-      16_000,
+      maxTokens === LIVE_LIMITS.extractionTokens ? 28_000 : 12_000,
     );
     const response = z
       .object({

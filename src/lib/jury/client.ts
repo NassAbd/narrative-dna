@@ -11,6 +11,8 @@ const messages: Record<string, string> = {
   execution_timeout: "Analysis timed out. Its reserved quota is retained.",
   insufficient_evidence:
     "The retrieved videos contain insufficient source-grounded evidence for this topic.",
+  openai_timeout: "OpenAI timed out. The reserved quota is retained; no automatic retry was made.",
+  oriane_timeout: "Oriane timed out. The reserved quota is retained; no automatic retry was made.",
   no_results: "No usable videos were returned for this topic.",
   oriane_budget: "Oriane credits are unavailable. The reserved quota is retained.",
   oriane_limited: "Oriane is temporarily rate limited. The reserved quota is retained.",
