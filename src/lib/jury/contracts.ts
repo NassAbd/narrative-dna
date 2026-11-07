@@ -1,5 +1,5 @@
 import { z } from "zod";
-export const LIVE_VERSION = "jury-v1-gpt4o-mini-2026-11-07";
+export const LIVE_VERSION = "jury-v2-gpt4o-mini-2026-11-07";
 export const LIVE_LIMITS = {
   analyses: 10,
   concurrent: 1,
@@ -36,6 +36,8 @@ export const STAGES = ["search", "retrieve", "extract", "group", "verify", "read
 export type LiveStage = (typeof STAGES)[number];
 export const JobStatusSchema = z.enum(["queued", "running", "completed", "failed", "cancelled"]);
 export interface LiveMetrics {
+  orianeRequests?: number;
+  openaiRequests?: number;
   orianeMs: number;
   normalizationMs: number;
   extractionMs: number;

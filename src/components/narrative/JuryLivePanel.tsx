@@ -215,6 +215,22 @@ export function JuryLivePanel({
     </section>
   );
 }
+const warningMessages: Record<string, string> = {
+  oriane_partial_response:
+    "Oriane returned partial results; this analysis uses only the evidence received.",
+  source_metadata_incomplete: "Some source metadata was unavailable or invalid.",
+  transcript_truncated:
+    "Long transcripts were shortened before analysis; original timestamps were preserved.",
+  passage_limit: "Some transcripts exceeded the bounded analysis size and were omitted.",
+  rejected_claim: "Some proposed claims failed source or semantic checks and were excluded.",
+  rejected_source_reference: "Unsupported source references were excluded.",
+  unsupported_group_wording_rejected:
+    "A proposed narrative failed grounding checks. Its verified clips remain as individual observations.",
+  invalid_group_references_rejected:
+    "A proposed narrative had invalid source references and was excluded.",
+  insufficient_group_support_rejected:
+    "A proposed narrative lacked independent video support and was excluded.",
+};
 function LiveResult({
   result,
   onOpen,
@@ -263,11 +279,13 @@ function LiveResult({
           </p>
         </details>
       )}
-      {result.warnings?.map((w, i) => (
-        <p key={i} className="text-sm text-muted-foreground">
-          {w}
-        </p>
-      ))}
+      {result.warnings
+        ?.filter((w) => warningMessages[w])
+        .map((w, i) => (
+          <p key={i} className="text-sm text-muted-foreground">
+            {warningMessages[w]}
+          </p>
+        ))}
       {result.narratives.length === 0 && (
         <p className="rounded-md border border-border p-5">
           Insufficient evidence for a multi-source narrative. Any source-verified individual

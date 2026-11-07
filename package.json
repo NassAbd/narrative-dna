@@ -11,6 +11,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
+    "test:backend": "vitest run --config src/lib/jury/backend.vitest.config.ts",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },

@@ -23,6 +23,9 @@ const clip = z
       "description",
     ]),
     provenance: z.literal("live"),
+    aiGenerated: z.literal(true).optional(),
+    sourceVerified: z.literal(true).optional(),
+    editorialReview: z.literal("required").optional(),
     frameUrl: z
       .string()
       .url()
@@ -84,12 +87,14 @@ export const LiveResultSchema = z
       videosContributingEvidence: count.max(10),
     }),
     metrics: z.object({
-      orianeMs: count,
-      normalizationMs: count,
-      extractionMs: count,
-      clusteringMs: count,
-      verificationMs: count,
-      totalMs: count,
+      orianeRequests: count.max(1).optional(),
+      openaiRequests: count.max(2).optional(),
+      orianeMs: z.number().finite().nonnegative(),
+      normalizationMs: z.number().finite().nonnegative(),
+      extractionMs: z.number().finite().nonnegative(),
+      clusteringMs: z.number().finite().nonnegative(),
+      verificationMs: z.number().finite().nonnegative(),
+      totalMs: z.number().finite().nonnegative(),
       inputTokens: count,
       outputTokens: count,
       estimatedOpenaiUsd: z.number().nonnegative(),

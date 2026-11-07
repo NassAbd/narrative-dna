@@ -3,6 +3,18 @@ import { SessionSchema, LiveJobSchema } from "./result-schema";
 import { type LiveQuery, STAGES } from "./contracts";
 const messages: Record<string, string> = {
   invalid_credentials: "Incorrect password.",
+  incorrect_password: "Incorrect password.",
+  unauthenticated: "Your session has expired. Please sign in again.",
+  unavailable: "Jury Live is temporarily unavailable. Explore is still available.",
+  storage_unavailable: "Jury Live is temporarily unavailable. Explore is still available.",
+  login_limited: "Too many attempts. Please try again later.",
+  execution_timeout: "Analysis timed out. Its reserved quota is retained.",
+  insufficient_evidence:
+    "The retrieved videos contain insufficient source-grounded evidence for this topic.",
+  no_results: "No usable videos were returned for this topic.",
+  oriane_budget: "Oriane credits are unavailable. The reserved quota is retained.",
+  oriane_limited: "Oriane is temporarily rate limited. The reserved quota is retained.",
+  openai_limited: "OpenAI is temporarily rate limited. The reserved quota is retained.",
   rate_limited: "Too many attempts. Please try again later.",
   quota_exhausted: "The global jury quota is exhausted.",
   busy: "Another analysis is running. Please try again after it finishes.",

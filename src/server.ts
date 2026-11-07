@@ -1,5 +1,5 @@
 import "./lib/error-capture";
-import { proxyJuryRequest } from "./lib/jury/proxy.server";
+import { handleJuryRequest } from "./lib/jury/backend.server";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
@@ -49,7 +49,7 @@ export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       if (new URL(request.url).pathname.startsWith("/api/jury/"))
-        return await proxyJuryRequest(request);
+        return await handleJuryRequest(request, env);
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);

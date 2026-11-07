@@ -6,3 +6,7 @@ pnpm-lock.yaml
 package-lock.json
 bun.lock
 routeTree.gen.ts
+
+# Lovable-generated integrations: platform owns their formatting.
+# TypeScript and all non-formatting ESLint rules still check these files.
+src/integrations/supabase/
