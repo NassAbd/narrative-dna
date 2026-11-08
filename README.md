@@ -26,8 +26,8 @@ TanStack Start, React and TypeScript power the app, built as a Nitro Cloudflare 
 Use [Node.js 24.14.0](https://nodejs.org) and npm:
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
+git clone https://github.com/NassAbd/narrative-dna.git
+cd narrative-dna
 npm i
 npm run dev
 ```
@@ -55,7 +55,7 @@ Narrative DNA was built for the **OpenAI DevDay Community Hackathon — Paris, O
 
 ## Documentation
 
-[Deployment and provenance](DEPLOYMENT.md) · [Latest iteration report](FINAL_ITERATION.md) · [Roadmap](roadmap.md) · [Presenter](presenter/README.md)
+[Deployment and provenance](DEPLOYMENT.md) · [Latest iteration report](FINAL_ITERATION.md) · [Roadmap](roadmap.md)
 
 ## Current limits
 
