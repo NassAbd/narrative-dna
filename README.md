@@ -6,7 +6,7 @@ An editorial atlas of housing narratives in France: explore what student-housing
 
 Built with Lovable during the OpenAI DevDay Community Hackathon in Paris, October 2026.
 
-[![Watch the Narrative DNA demo](https://img.youtube.com/vi/WEa66XDc7dw/maxresdefault.jpg)](https://www.youtube.com/watch?v=WEa66XDc7dw)
+[![Watch the Narrative DNA demo](public/screenshot.png)](https://www.youtube.com/watch?v=WEa66XDc7dw)
 
 **[Watch the demo](https://www.youtube.com/watch?v=WEa66XDc7dw)** · **[Try the public demo](https://narrative-evidence-atlas.lovable.app)** — no account, no API key, nothing to install.
 
