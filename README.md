@@ -1,20 +1,29 @@
 # Narrative DNA
 
-An editorial demonstration of housing narratives in France, using a precomputed analysis of real Oriane videos. The current release contains two narrative groups and three ungrouped student-housing observations: nine human-approved claims from five source videos. Narrative titles and summaries remain editorial drafts.
+**Trace a story back to its sources.**
 
-This project was built with [Lovable](https://lovable.dev).
+An editorial atlas of housing narratives in France: explore what student-housing videos actually say, claim by claim, with every statement anchored to exact quotes, timestamps and original footage.
 
-## Build with Lovable
+Built with Lovable during the OpenAI DevDay Community Hackathon in Paris, October 2026.
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/41cd812c-07d9-4135-a56e-46e9f7e157f0).
+[![Watch the Narrative DNA demo](https://img.youtube.com/vi/WEa66XDc7dw/maxresdefault.jpg)](https://www.youtube.com/watch?v=WEa66XDc7dw)
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+**[Watch the demo](https://www.youtube.com/watch?v=WEa66XDc7dw)** · **[Try the public demo](https://narrative-evidence-atlas.lovable.app)** — no account, no API key, nothing to install.
 
-## Development
+## What you can do
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+- **Explore a precomputed analysis:** browse two narrative groups plus three standalone student-housing observations — nine human-approved claims extracted from five real Oriane videos.
+- **Open the evidence behind every claim:** each card keeps the exact original quotation, bounded transcript context, source ID, fractional timestamp, creator handle, publication date and a verified frame from the source video.
+- **Watch the originals:** evidence drawers mount the official TikTok player for verified sources — lazy-loaded, never autoplaying, with the quoted timestamp shown beside TikTok's own controls.
+- **Develop safely:** opt-in mock data keeps local development free of provider keys and never ships in the production bundle.
+
+## Tech stack
+
+TanStack Start, React and TypeScript power the app, built as a Nitro Cloudflare worker. Production serves a validated, precomputed public payload through a single `NarrativeService` boundary, so a live backend can replace it without UI changes. The public payload is a whitelist projection of a human-approved analysis: no rejected candidates, reviewer identities or raw provider responses are included. Vitest covers frontend and core checks. **Lovable built and hosts the project; provider credentials never reach the browser.**
+
+## Getting started
+
+Use [Node.js 24.14.0](https://nodejs.org) and npm:
 
 ```sh
 git clone <this-repository-url>
@@ -23,23 +32,13 @@ npm i
 npm run dev
 ```
 
-## Approved precomputed demo
-
-Run `npm run dev -- --host 127.0.0.1 --port 5184`, open the local URL and choose **View precomputed analysis**. The topic and platform are fixed; live search is not connected. No Oriane/OpenAI keys or API calls are required.
-
-The UI accesses data through `NarrativeService` in `src/lib/narrative/index.ts`. The default service validates the curated public payload in `approved-demo.json` through `ValidatedPayloadSchema`, then adapts it to `AnalysisResult`, `Narrative` and `EvidenceClip`. This public projection contains only the nine approved claims and their exact source evidence. It omits local reviewer identities, fingerprints, other candidates, API responses and experimental diagnostics. Platform labels are copied from the matching normalized Oriane records; no additional metadata is reconstructed.
-
-Each narrative counts distinct video IDs, not claim cards. The three ungrouped claims are explicitly individual observations from one source, never a third narrative. Evidence drawers preserve exact original quotes, bounded context, source IDs and fractional timestamps. Creator handles, publication dates and nearest available Oriane frames have been restored by exact source ID. Original links remain unavailable. Missing or failed metadata/media retains explicit fallbacks. Frames outside the quoted interval are clearly labelled with the actual image timestamp. No publication period is inferred from the collection date. Counts describe the approved evidence selection, not the full corpus or public opinion.
-
-Mock data remains in its own module and is opt-in for local development only:
+Open the local URL and choose **View precomputed analysis** — the topic and platform are fixed, and no Oriane/OpenAI keys are required. For local development with fictional data instead:
 
 ```sh
 VITE_NARRATIVE_MODE=mock npm run dev
 ```
 
-Production always uses the approved precomputed service; mock evidence is excluded from the production browser bundle. Never use a `VITE_` variable for secrets.
-
-## Verification and deployment
+## Verification
 
 ```sh
 npm run typecheck
@@ -48,12 +47,16 @@ npm test
 npm run build
 ```
 
-Tested with Node 24.14.0. Production output is a TanStack Start/Nitro Cloudflare worker (`.output/server/wrangler.json`) and browser assets (`.output/public`). Use the existing Lovable deployment flow or a compatible Cloudflare deployment; this is not a plain static-site export. No provider credentials are required for this stage. See [DEPLOYMENT.md](DEPLOYMENT.md) for the local verification report and remaining limitations.
+The production build emits a Cloudflare worker (`.output/server/wrangler.json`) plus browser assets (`.output/public`); deploy through the connected Lovable workflow. Browser assets are checked to contain no provider key names, provider API hostnames or mock identifiers.
 
-## Public hackathon demo
+## Hackathon
 
-https://narrative-evidence-atlas.lovable.app
+Narrative DNA was built for the **OpenAI DevDay Community Hackathon — Paris, October 2026**. The public demo is a real, anonymously verified deployment: nine approved cards with restored creator and date metadata and seven unique public Oriane frames. It is an independent project, without a claim of OpenAI or Oriane endorsement or affiliation.
 
-The public MVP was deployed and anonymously verified before enrichment. The nine approved cards now include real creator/date metadata and seven unique public Oriane frames. Enrichment does not alter formulations, quotes, transcript context, claim timestamps, approvals or narrative membership. See DEPLOYMENT.md for API provenance, media checks and playback limitations. Live API credentials are never needed to view the demo.
+## Documentation
 
-Jury Live deployment, quotas, secret rotation and measured verification: [JURY_LIVE.md](JURY_LIVE.md).
+[Deployment and provenance](DEPLOYMENT.md) · [Latest iteration report](FINAL_ITERATION.md) · [Roadmap](roadmap.md) · [Presenter](presenter/README.md)
+
+## Current limits
+
+Explore runs on a precomputed analysis; live search is not connected. The topic and platform are fixed. Three of the nine frames sit outside the quoted interval and are explicitly labelled with their actual timestamp; one source's official player showed a network error in testing, though its link, image and citation remain intact. TikTok's canonical publication page may show a login prompt depending on browser or region. Narrative titles and summaries remain editorial drafts.
